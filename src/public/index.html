@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head></head>
+  <title>Lightning Portal</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <style type="text/css">
+    .links line {
+      stroke: #999;
+      stroke-opacity: 0.1;
+    }
+
+    .links line.selected {
+      stroke: #338dc9;
+      stroke-width: 2px;
+    }
+
+    .nodes circle {
+      fill: #555555;
+      stroke: #aaa;
+      stroke-width: 1.5px;
+    }
+
+    .nodes circle.selected {
+      fill: #00558d;
+      stroke: #338dc9;
+    }
+  </style>
+<body>
+  <div class="">
+    Network stats go here
+  </div>
+  <div id="app"></div>
+  <svg width="900" height="700"></svg>
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+  <script src="/public/graph.js"></script>
+  <script>
+    renderNetworkGraph(document.getElementsByTagName('svg')[0]);
+  </script>
+</body>
+</html>
+

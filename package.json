@@ -1,0 +1,24 @@
+{
+  "name": "lightningportal",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "watch:server": "nodemon --ignore dist --ignore src/client src/server/server"
+  },
+  "keywords": [],
+  "author": "Brian Mancini <bmancini@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^4.18.1",
+    "nodemon": "^1.15.1",
+    "prettier": "^1.10.2"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "lnd-async": "^1.0.2",
+    "serve-static": "^1.13.2",
+    "winston": "^2.4.0"
+  }
+}
