@@ -17,7 +17,7 @@
   "dependencies": {
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
-    "lnd-async": "^1.0.2",
+    "lnd-async": "^1.0.3",
     "serve-static": "^1.13.2",
     "winston": "^2.4.0"
   }

@@ -13,7 +13,9 @@ function mapLndGraph(json) {
 
 function renderNetworkGraph(svg) {
   svg = d3.select(svg);
-  svg.attr('width', svg.node().parentNode.clientWidth).attr('height', 600);
+  svg
+    .attr('width', svg.node().parentNode.clientWidth)
+    .attr('height', svg.node().parentNode.clientHeight);
 
   let width = svg.attr('width');
   let height = svg.attr('height');
@@ -34,14 +36,14 @@ function renderNetworkGraph(svg) {
     let simulation = d3
       .forceSimulation()
       .force('links', d3.forceLink().id(d => d.pub_key))
-      .force(
-        'charge',
-        d3
-          .forceCollide()
-          .radius(30)
-          .strength(0.1)
-      )
-      //.force('charge', d3.forceManyBody().strength(-20))
+      // .force(
+      //   'charge',
+      //   d3
+      //     .forceCollide()
+      //     .radius(20)
+      //     .strength(0.2)
+      // )
+      .force('charge', d3.forceManyBody().strength(-100))
       .force('center', d3.forceCenter(width / 2, height / 2));
 
     let link = g
@@ -63,12 +65,22 @@ function renderNetworkGraph(svg) {
       .data(nodes)
       .enter()
       .append('circle')
+      .attr('id', d => 'pk_' + d.pub_key)
       .attr('class', d => (d.pub_key === selectedPubKey ? 'selected' : ''))
+      .attr('style', d => 'stroke: ' + d.color)
       .attr('r', d => (d.pub_key === selectedPubKey ? 4 : 2))
       .on('click', nodeClicked);
 
     simulation.nodes(nodes).on('tick', ticked);
     simulation.force('links').links(links);
+
+    // create the zoom function
+    let zoom = (window.zoom = d3.zoom().on('zoom', () => {
+      g.attr('transform', d3.event.transform);
+    }));
+
+    // apply zoom function to svg
+    svg.call(zoom);
 
     function ticked() {
       link
@@ -81,16 +93,23 @@ function renderNetworkGraph(svg) {
     }
 
     function nodeClicked(d) {
-      selectedPubKey = d.pub_key;
       onNodeSelected(d.pub_key);
+      selectNode(d);
+    }
 
+    function selectNode(d) {
+      selectedPubKey = d.pub_key;
+
+      // change all nodes to radius 2
       d3
         .select('.nodes circle.selected')
-        .attr('r', 6)
+        .attr('r', 2)
         .attr('class', null);
+
+      // update current node to radius 4
       d3
-        .select(this)
-        .attr('r', 9)
+        .select('#pk_' + d.pub_key)
+        .attr('r', 4)
         .attr('class', 'selected');
 
       // remove selected line
@@ -108,15 +127,20 @@ function renderNetworkGraph(svg) {
         );
     }
 
-    svg.call(
-      d3
-        .zoom()
-        .scaleExtent([1 / 2, 8])
-        .on('zoom', zoomed)
-    );
+    function find(search) {
+      let node = nodes.find(node => node.pub_key === search);
 
-    function zoomed() {
-      g.attr('transform', d3.event.transform);
+      // obtain a transform to move to the current node
+      let transform = d3.zoomTransform(svg).translate(node.x + width, node.y + height);
+
+      // perform translation
+      zoom.translateTo(svg, transform.x, transform.y);
+
+      selectNode(node);
     }
+
+    document.getElementById('searchBtn').onclick = () => {
+      find(document.getElementById('search').value);
+    };
   }
 }

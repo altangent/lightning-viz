@@ -18,7 +18,7 @@
     .nodes circle {
       fill: #555555;
       stroke: #aaa;
-      stroke-width: 1.5px;
+      stroke-width: 1px;
     }
 
     .nodes circle.selected {
@@ -29,6 +29,10 @@
 <body>
   <div class="">
     Network stats go here
+  </div>
+  <div>
+    <input id='search' type='text' value='02ef4adb80fdef16858f0e2d4618f98e160f4f2a5a439db186dce5ec0be076e60a' />
+    <input id='searchBtn' type='button' value='Find' />
   </div>
   <div id="app"></div>
   <svg width="900" height="700"></svg>
