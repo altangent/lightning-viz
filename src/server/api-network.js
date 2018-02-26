@@ -1,6 +1,7 @@
 const winston = require('winston');
 const express = require('express');
 const lnd = require('./lnd');
+const peerMapper = require('./data/peer-mapper');
 const app = express();
 
 app.get('/api/network', (req, res, next) => getNetwork(req, res).catch(next));
@@ -27,11 +28,12 @@ async function getGraph(req, res) {
 
   let data = await loadGraph();
 
-  let nodeMap = constructNodeMap(data);
-  let edgeMap = constructEdgeMap(data);
-  let prunedNodeMap = bfs(nodeMap, edgeMap, pubkey, nodeCount);
-  let prunedData = destructNodeMap(prunedNodeMap, edgeMap);
-  res.send(prunedData);
+  // let nodeMap = constructNodeMap(data);
+  // let edgeMap = constructEdgeMap(data);
+  // let prunedNodeMap = bfs(nodeMap, edgeMap, pubkey, nodeCount);
+  // let prunedData = destructNodeMap(prunedNodeMap, edgeMap);
+  //res.send(prunedData);
+  res.send(data);
 }
 
 function constructNodeMap(data) {

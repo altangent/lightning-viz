@@ -4,19 +4,24 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "test": "mocha \"src/**/*.spec.js\"",
+    "test:file": "mocha",
     "watch:server": "nodemon --ignore dist --ignore src/client src/server/server"
   },
   "keywords": [],
   "author": "Brian Mancini <bmancini@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "chai": "^4.1.2",
     "eslint": "^4.18.1",
+    "mocha": "^5.0.1",
     "nodemon": "^1.15.1",
     "prettier": "^1.10.2"
   },
   "dependencies": {
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
+    "level": "^3.0.0",
     "lnd-async": "^1.0.3",
     "serve-static": "^1.13.2",
     "winston": "^2.4.0"

@@ -4,8 +4,15 @@ const express = require('express');
 const serveStatic = require('serve-static');
 const app = express();
 const lnd = require('./lnd');
+const peerProessor = require('./domain/peer-processor');
 
-lnd.connect();
+lnd
+  .connect()
+  .then(() => peerProessor.collectPeerInfo(true))
+  .catch(err => {
+    winston.error(err);
+    process.exit(1);
+  });
 
 app.use('/public', serveStatic(path.join(__dirname, '../public')));
 

@@ -31,48 +31,82 @@ function renderNetworkGraph(svg) {
     let selectedPubKey = null;
     onNodeSelected(selectedPubKey);
 
+    let orphan = { pub_key: 'ophans', color: '#000' };
+    nodes.push(orphan);
+
     var g = svg.append('g');
 
     let simulation = d3
       .forceSimulation()
-      .force('links', d3.forceLink().id(d => d.pub_key))
-      // .force(
-      //   'charge',
-      //   d3
-      //     .forceCollide()
-      //     .radius(20)
-      //     .strength(0.2)
-      // )
-      .force('charge', d3.forceManyBody().strength(-100))
-      .force('center', d3.forceCenter(width / 2, height / 2));
+      .force('link', d3.forceLink().id(d => d.pub_key))
+      .force(
+        'charge',
+        d3
+          .forceManyBody()
+          .strength(-100)
+          //.distanceMin(10)
+          .distanceMax(1000)
+      )
+      .force('center', d3.forceCenter(width / 2, height / 2))
+      // .force('x', d3.forceX())
+      // .force('y', d3.forceY())
+      .on('tick', ticked);
 
     let link = g
       .append('g')
       .attr('class', 'links')
-      .selectAll('line')
-      .data(links)
-      .enter()
-      .append('line')
-      .attr(
-        'class',
-        d => (d.source === selectedPubKey || d.target === selectedPubKey ? 'selected' : '')
-      );
+      .selectAll('line');
 
     let node = g
       .append('g')
       .attr('class', 'nodes')
-      .selectAll('circle')
-      .data(nodes)
-      .enter()
-      .append('circle')
-      .attr('id', d => 'pk_' + d.pub_key)
-      .attr('class', d => (d.pub_key === selectedPubKey ? 'selected' : ''))
-      .attr('style', d => 'stroke: ' + d.color)
-      .attr('r', d => (d.pub_key === selectedPubKey ? 4 : 2))
-      .on('click', nodeClicked);
+      .selectAll('circle');
 
-    simulation.nodes(nodes).on('tick', ticked);
-    simulation.force('links').links(links);
+    let alpha = 0.2;
+
+    function update() {
+      link.exit().remove();
+      link = link
+        .data(links)
+        .enter()
+        .append('line')
+        .attr(
+          'class',
+          d => (d.source === selectedPubKey || d.target === selectedPubKey ? 'selected' : '')
+        )
+        .merge(link);
+
+      node.exit().remove();
+      node = node
+        .data(nodes)
+        .enter()
+        .append('circle')
+        .attr('id', d => 'pk_' + d.pub_key)
+        .attr('class', d => (d.pub_key === selectedPubKey ? 'selected' : ''))
+        .attr('style', d => 'stroke: ' + d.color)
+        .attr('r', d => (d.pub_key === selectedPubKey ? 4 : 2))
+        .on('click', nodeClicked)
+        .merge(node);
+
+      simulation.nodes(nodes);
+      simulation.force('link').links(links);
+      if (alpha)
+        simulation.alpha(alpha).restart(); // adjust to allow first run to finish
+      else simulation.restart();
+    }
+
+    update();
+
+    setTimeout(
+      () =>
+        setInterval(() => {
+          nodes.push({ pub_key: 'asdf', color: '#000000' });
+          links.push({ source: orphan, target: nodes[nodes.length - 1] });
+          update();
+          alpha = 0.0;
+        }, 3000),
+      15000
+    );
 
     // create the zoom function
     let zoom = (window.zoom = d3.zoom().on('zoom', () => {
