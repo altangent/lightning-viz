@@ -17,7 +17,7 @@ lnd
     process.exit(1);
   });
 
-scheduler.scheduleJob('0 * * * * *', () => statProcessor.collectStats('bitcoin'));
+scheduler.scheduleJob('0 0 * * * *', () => statProcessor.collectStats('bitcoin'));
 scheduler.scheduleJob('0 1 * * * *', () => peerProcessor.collectPeerInfo(false));
 
 app.use('/public', serveStatic(path.join(__dirname, '../public')));

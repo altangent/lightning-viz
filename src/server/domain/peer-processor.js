@@ -34,13 +34,13 @@ async function processNode({ pub_key, addresses }, skipProcessed) {
       pub_key,
       host: undefined,
       port: undefined,
-      isAvailable: false,
-      geoInfo: undefined,
+      is_reachable: false,
+      geo_info: undefined,
     };
   }
 
   if (!addresses.length) {
-    peer.isAvailable = false;
+    peer.is_reachable = false;
     await peerMapper.putPeer(peer);
     return;
   }
@@ -50,7 +50,7 @@ async function processNode({ pub_key, addresses }, skipProcessed) {
 
   if (!peer.geoInfo) {
     let geoInfo = await geoService.getHostGeoInfo(host);
-    peer.geoInfo = {
+    peer.geo_info = {
       country_code: geoInfo.country_code,
       country_name: geoInfo.country_name,
       region_code: geoInfo.region_code,
@@ -60,6 +60,6 @@ async function processNode({ pub_key, addresses }, skipProcessed) {
     };
   }
 
-  peer.isAvailable = await peerService.checkPeerConnection(addr);
+  peer.is_reachable = await peerService.checkPeerConnection(addr);
   await peerMapper.putPeer(peer);
 }
