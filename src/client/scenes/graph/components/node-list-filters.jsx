@@ -6,7 +6,7 @@ export const NodeListFilters = ({ nodeQuery, showOnlyReachable, filterChanged })
   <div className="node-list-filter">
     <FormGroup>
       <Input
-        size="sm"
+        bsSize="sm"
         type="text"
         placeholder="Find nodes..."
         value={nodeQuery}
