@@ -34,7 +34,7 @@
     "react-dom": "^16.2.0",
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
-    "reactstrap": "^4.8.0",
+    "reactstrap": "^5.0.0-alpha.4",
     "serve-static": "^1.13.2",
     "winston": "^2.4.0"
   },

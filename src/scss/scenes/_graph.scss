@@ -6,6 +6,75 @@
   bottom: 0;
 }
 
+.graph-controls {
+  position: fixed;
+  z-index: 1;
+  top: 0.25rem;
+  right: 0.25rem;
+  background-color: #333;
+  color: #ddd;
+  padding: 0.25rem;
+  opacity: 0.8;
+  width: 300px;
+}
+
+.graph-info {
+  position: fixed;
+  z-index: 1;
+  top: 0.25rem;
+  bottom: 0.25rem;
+  left: 0.25rem;
+  background-color: #333;
+  color: #ddd;
+  padding: 0.25rem;
+  opacity: 0.85;
+  width: 300px;
+}
+
+.node-list-filter {
+  margin-bottom: 1.5rem;
+}
+
+.node-list {
+  height: 100%;
+  overflow-y: scroll;
+  list-style-type: none;
+  padding-left: 0;
+
+  .node-list-item {
+    cursor: default;
+  }
+
+  .node-color {
+    display: inline-block;
+    border-radius: 5px;
+    width: 10px;
+    height: 10px;
+    margin-right: 0.75rem;
+  }
+
+  .node-alias {
+    display: inline-block;
+    width: 240px;
+  }
+
+  .node-reachable {
+    display: inline-block;
+    border-radius: 5px;
+    width: 10px;
+    height: 10px;
+    margin-left: 0.75rem;
+
+    &.yes {
+      background-color: #189e18;
+    }
+
+    &.no {
+      background-color: #9e1818;
+    }
+  }
+}
+
 .links line {
   stroke: #999;
   stroke-opacity: 0.1;

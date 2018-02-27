@@ -6,6 +6,7 @@ export class Graph extends React.Component {
   static propTypes = {
     graph: PropTypes.object,
     onNodeSelected: PropTypes.func,
+    selectedNode: PropTypes.object,
   };
 
   componentDidMount() {
@@ -13,13 +14,16 @@ export class Graph extends React.Component {
   }
 
   shouldComponentUpdate(newProps) {
-    let graph = this.mapLndGraph(newProps.graph);
-    this.renderUpdates(graph);
+    if (!this.props.graph) {
+      let graph = this.mapLndGraph(newProps.graph);
+      this.graph = graph;
+      this.renderUpdates();
+    }
     return false;
   }
 
   render() {
-    return <svg ref={elem => (this.svg = elem)} />;
+    return <svg ref={elem => (this.svgRef = elem)} />;
   }
 
   mapLndGraph(json) {
@@ -33,15 +37,15 @@ export class Graph extends React.Component {
   }
 
   initializeGraph = () => {
-    let svg = d3.select(this.svg);
-    svg
-      .attr('width', svg.node().parentNode.clientWidth)
-      .attr('height', svg.node().parentNode.clientHeight);
+    let d3svg = d3.select(this.svgRef);
+    d3svg
+      .attr('width', d3svg.node().parentNode.clientWidth)
+      .attr('height', d3svg.node().parentNode.clientHeight);
 
-    let width = svg.attr('width');
-    let height = svg.attr('height');
+    let width = d3svg.attr('width');
+    let height = d3svg.attr('height');
 
-    let group = svg.append('g');
+    let group = d3svg.append('g');
 
     this.simulation = d3
       .forceSimulation()
@@ -75,7 +79,7 @@ export class Graph extends React.Component {
     });
 
     // apply zoom function to svg
-    svg.call(this.zoom);
+    d3svg.call(this.zoom);
   };
 
   simulationTick = () => {
@@ -87,8 +91,8 @@ export class Graph extends React.Component {
     this.nodes.attr('cx', d => d.x).attr('cy', d => d.y);
   };
 
-  renderUpdates = graph => {
-    let { links, nodes } = graph;
+  renderUpdates = () => {
+    let { links, nodes } = this.graph;
 
     this.links.exit().remove();
     this.links = this.links
@@ -111,7 +115,7 @@ export class Graph extends React.Component {
 
     this.simulation.nodes(nodes);
     this.simulation.force('link').links(links);
-    this.simulation.alpha(1).restart(); // adjust to allow first run to finish
+    this.simulation.alpha(0.5).restart(); // adjust to allow first run to finish
   };
 
   nodeClicked = d => {
@@ -120,7 +124,7 @@ export class Graph extends React.Component {
   };
 
   selectNode = d => {
-    let selectedPubKey = (this.selectedPubKey = d.pub_key);
+    let selectedPubKey = d.pub_key;
 
     // change all nodes to radius 2
     d3
@@ -149,15 +153,18 @@ export class Graph extends React.Component {
       );
   };
 
-  // find = (search) => {
-  //   let node = nodes.find(node => node.pub_key === search);
+  find = pub_key => {
+    let node = this.graph.nodes.find(node => node.pub_key === pub_key);
 
-  //   // obtain a transform to move to the current node
-  //   let transform = d3.zoomTransform(svg).translate(node.x + width, node.y + height);
+    // obtain a transform to move to the current node
+    let d3svg = d3.select(this.svgRef);
+    let width = d3svg.attr('width');
+    let height = d3svg.attr('height');
+    let transform = d3.zoomTransform(d3svg).translate(node.x + width, node.y + height);
 
-  //   // perform translation
-  //   zoom.translateTo(svg, transform.x, transform.y);
+    // perform translation
+    this.zoom.translateTo(d3svg, transform.x, transform.y);
 
-  //   selectNode(node);
-  // }
+    this.selectNode(node);
+  };
 }

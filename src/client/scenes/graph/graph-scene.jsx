@@ -1,9 +1,12 @@
 import React from 'react';
 import { Graph } from './components/graph';
+import { GraphInfoCard } from './components/graph-info-card';
 
 export class GraphScene extends React.Component {
   state = {
     graph: undefined,
+    nodeQuery: '',
+    showOnlyReachable: false,
   };
 
   componentWillMount() {
@@ -32,10 +35,27 @@ export class GraphScene extends React.Component {
   //   );
   // }
 
+  selectNode = pub_key => {
+    this.graph.find(pub_key);
+  };
+
+  filterChanged = (key, value) => {
+    this.setState({ [key]: value });
+  };
+
   render() {
     return (
       <div className="graph-container">
-        <Graph onNodeSelected={console.log} graph={this.state.graph} />
+        <Graph
+          ref={el => (this.graph = el)}
+          onNodeSelected={console.log}
+          graph={this.state.graph}
+        />
+        <GraphInfoCard
+          {...this.state}
+          filterChanged={this.filterChanged}
+          selectNode={this.selectNode}
+        />
       </div>
     );
   }
