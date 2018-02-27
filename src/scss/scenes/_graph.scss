@@ -1,0 +1,28 @@
+.graph-container {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.links line {
+  stroke: #999;
+  stroke-opacity: 0.1;
+}
+
+.links line.selected {
+  stroke: #338dc9;
+  stroke-width: 2px;
+}
+
+.nodes circle {
+  fill: #555555;
+  stroke: #aaa;
+  stroke-width: 1px;
+}
+
+.nodes circle.selected {
+  fill: #00558d;
+  stroke: #338dc9;
+}

@@ -13,7 +13,6 @@ async function loadGraph() {
   for (let i = 0; i < graph.nodes.length; i++) {
     let node = graph.nodes[i];
     let peerInfo = await peerMapper.getPeer(node.pub_key);
-    if (peerInfo) console.log(peerInfo);
     graph.nodes[i] = Object.assign(node, peerInfo);
   }
 
