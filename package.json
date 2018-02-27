@@ -6,25 +6,61 @@
   "scripts": {
     "test": "mocha \"src/**/*.spec.js\"",
     "test:file": "mocha",
+    "start": "NODE_ENV=production node src/server/server",
+    "build": "npm-run-all build:*",
+    "build:app": "NODE_ENV=production browserify src/client/app.jsx --extension=.jsx -o ./dist/app/bundle.js",
+    "build:app-compress": "uglifyjs -c -o ./dist/app/bundle.js ./dist/app/bundle.js",
+    "build:scss": "node-sass -o dist/css --output-style compressed src/scss/app.scss",
+    "watch": "npm-run-all --parallel watch:*",
+    "watch:app": "browserify src/client/app.jsx --extension=.jsx -o ./dist/app/bundle.js && watchify src/client/app.jsx --debug -v --extension=.jsx -o ./dist/app/bundle.js",
+    "watch:scss": "node-sass -o dist/css src/scss/app.scss && node-sass -w -o dist/css src/scss/app.scss",
     "watch:server": "nodemon --ignore dist --ignore src/client src/server/server"
   },
   "keywords": [],
   "author": "Brian Mancini <bmancini@gmail.com>",
   "license": "MIT",
-  "devDependencies": {
-    "chai": "^4.1.2",
-    "eslint": "^4.18.1",
-    "mocha": "^5.0.1",
-    "nodemon": "^1.15.1",
-    "prettier": "^1.10.2"
-  },
   "dependencies": {
     "body-parser": "^1.18.2",
+    "bootstrap": "^4.0.0",
+    "browserify": "^16.1.0",
+    "compression": "^1.7.2",
+    "d3": "^4.13.0",
     "express": "^4.16.2",
     "level": "^3.0.0",
     "lnd-async": "^1.0.3",
     "node-schedule": "^1.3.0",
+    "prop-types": "^15.6.1",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-router": "^4.2.0",
+    "react-router-dom": "^4.2.2",
+    "reactstrap": "^4.8.0",
     "serve-static": "^1.13.2",
     "winston": "^2.4.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^8.2.2",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.24.1",
+    "babelify": "^8.0.0",
+    "chai": "^4.1.2",
+    "eslint": "^4.18.1",
+    "eslint-plugin-react": "^7.7.0",
+    "mocha": "^5.0.1",
+    "node-sass": "^4.7.2",
+    "nodemon": "^1.15.1",
+    "npm-run-all": "^4.1.2",
+    "prettier": "^1.10.2",
+    "watchify": "^3.10.0"
+  },
+  "browserify": {
+    "transform": [
+      [
+        "babelify"
+      ]
+    ]
   }
 }
