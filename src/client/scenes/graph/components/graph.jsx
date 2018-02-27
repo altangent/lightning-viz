@@ -44,6 +44,7 @@ export class Graph extends React.Component {
     let node = this.graphData.nodes.find(node => node.pub_key === pub_key);
     this._highlightNode(node);
     this._focusNode(node);
+    this.props.onNodeSelected(node.pub_key);
   };
 
   _mergeGraphState(json) {
@@ -137,7 +138,7 @@ export class Graph extends React.Component {
   };
 
   _nodeClicked = d => {
-    this.props.onNodeSelected(d);
+    this.props.onNodeSelected(d.pub_key);
     this._highlightNode(d);
   };
 

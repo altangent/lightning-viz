@@ -1,12 +1,17 @@
 import React from 'react';
 import { Graph } from './components/graph';
-import { GraphInfoCard } from './components/graph-info-card';
+import { NodeListCard } from './components/node-list/node-list-card';
+import { NodeInfoCard } from './components/node-info/node-info-card';
 
 export class GraphScene extends React.Component {
   state = {
     graph: undefined,
+    nodeLookup: undefined,
+    edgeLookup: undefined,
     nodeQuery: '',
     showOnlyReachable: false,
+    selectedNode: undefined,
+    selectedNodeChannels: undefined,
   };
 
   componentWillMount() {
@@ -18,7 +23,13 @@ export class GraphScene extends React.Component {
     fetch('/api/graph?nodes=' + maxNodes)
       .then(res => res.json())
       .then(graph => {
-        this.setState({ graph });
+        let nodeLookup = new Map(graph.nodes.map(node => [node.pub_key, node]));
+        let edgeLookup = new Map();
+        for (let edge of graph.edges) {
+          edgeLookup.set(edge.node1_pub, (edgeLookup.get(edge.node1_pub) || new Set()).add(edge));
+          edgeLookup.set(edge.node2_pub, (edgeLookup.get(edge.node2_pub) || new Set()).add(edge));
+        }
+        this.setState({ graph, nodeLookup, edgeLookup });
         this.graphRef.updateGraph(graph);
       });
   }
@@ -31,19 +42,26 @@ export class GraphScene extends React.Component {
     this.setState({ [key]: value });
   };
 
+  onNodeSelected = pub_key => {
+    let selectedNode = this.state.nodeLookup.get(pub_key);
+    let selectedNodeChannels = Array.from(this.state.edgeLookup.get(pub_key));
+    this.setState({ selectedNode, selectedNodeChannels });
+  };
+
   render() {
     return (
       <div className="graph-container">
         <Graph
           ref={el => (this.graphRef = el)}
-          onNodeSelected={console.log}
+          onNodeSelected={this.onNodeSelected}
           graph={this.state.graph}
         />
-        <GraphInfoCard
+        <NodeListCard
           {...this.state}
           filterChanged={this.filterChanged}
           selectNode={this.selectNode}
         />
+        <NodeInfoCard {...this.state} />
       </div>
     );
   }
