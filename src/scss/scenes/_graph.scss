@@ -83,20 +83,28 @@
 
 .links line.selected {
   stroke: #338dc9;
-  stroke-width: 2px;
-  stroke-opacity: 0.25;
+  stroke-width: 1px;
+  stroke-opacity: 0.5;
+  stroke-dasharray: 9, 3;
+  animation: dash 2s linear infinite;
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: 24;
+  }
 }
 
 .nodes circle {
   fill: #555;
-  stroke: #aaa;
-  stroke-width: 1px;
+  stroke: #eee;
+  stroke-width: 0.5px;
 }
 
-.nodes circle.selected {
-  stroke-width: 5px;
-}
+// .nodes circle.selected {
+//   stroke-width: 10px;
+// }
 
-.nodes circle.highlight {
-  stroke-width: 3px;
-}
+// .nodes circle.highlight {
+//   stroke-width: 6px;
+// }

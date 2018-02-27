@@ -117,7 +117,7 @@ export class Graph extends React.Component {
       .enter()
       .append('circle')
       .attr('id', d => 'pk_' + d.pub_key)
-      .attr('style', d => 'stroke: ' + d.color)
+      .attr('style', d => 'fill: ' + d.color)
       .attr('r', 2)
       .on('click', this._nodeClicked)
       .merge(this.nodes);
