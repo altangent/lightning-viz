@@ -77,21 +77,26 @@
 
 .links line {
   stroke: #999;
+  stroke-width: 1px;
   stroke-opacity: 0.1;
 }
 
 .links line.selected {
   stroke: #338dc9;
   stroke-width: 2px;
+  stroke-opacity: 0.25;
 }
 
 .nodes circle {
-  fill: #555555;
+  fill: #555;
   stroke: #aaa;
   stroke-width: 1px;
 }
 
 .nodes circle.selected {
-  fill: #00558d;
-  stroke: #338dc9;
+  stroke-width: 5px;
+}
+
+.nodes circle.highlight {
+  stroke-width: 3px;
 }

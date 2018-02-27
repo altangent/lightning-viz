@@ -85,17 +85,17 @@ export class Graph extends React.Component {
       .force('center', d3.forceCenter(width / 2, height / 2))
       .on('tick', this._simulationTick);
 
-    // construct node selection method
-    this.nodes = zoomGroup
-      .append('g')
-      .attr('class', 'nodes')
-      .selectAll('circle');
-
     // construct link selection method
     this.links = zoomGroup
       .append('g')
       .attr('class', 'links')
       .selectAll('line');
+
+    // construct node selection method
+    this.nodes = zoomGroup
+      .append('g')
+      .attr('class', 'nodes')
+      .selectAll('circle');
   };
 
   _simulationTick = () => {
@@ -110,15 +110,7 @@ export class Graph extends React.Component {
   _renderUpdates = () => {
     let { links, nodes } = this.graphData;
 
-    // merge the new links
-    this.links.exit().remove();
-    this.links = this.links
-      .data(links)
-      .enter()
-      .append('line')
-      .merge(this.links);
-
-    // merge the new nodes (ontop of links)
+    // merge the new nodes
     this.nodes.exit().remove();
     this.nodes = this.nodes
       .data(nodes)
@@ -129,6 +121,14 @@ export class Graph extends React.Component {
       .attr('r', 2)
       .on('click', this._nodeClicked)
       .merge(this.nodes);
+
+    // merge the new links
+    this.links.exit().remove();
+    this.links = this.links
+      .data(links)
+      .enter()
+      .append('line')
+      .merge(this.links);
 
     // update the simulation
     this.simulation.nodes(nodes);
@@ -141,19 +141,26 @@ export class Graph extends React.Component {
     this._highlightNode(d);
   };
 
-  _highlightNode = d => {
-    let selectedPubKey = d.pub_key;
-
-    // change all nodes to radius 2
+  _highlightNode = node => {
+    // reset all nodes
     d3
-      .select('.nodes circle.selected')
+      .selectAll('.nodes circle.selected, .nodes circle.highlight')
       .attr('r', 2)
       .attr('class', null);
 
-    // update current node to radius 4
+    // update connected nodes
+    let connPubKeys = this._findConnectedPubKeys(node);
+    for (let connPubKey of connPubKeys) {
+      d3
+        .select('#pk_' + connPubKey)
+        .attr('r', 3)
+        .attr('class', 'highlight');
+    }
+
+    // update current node
     d3
-      .select('#pk_' + d.pub_key)
-      .attr('r', 4)
+      .select('#pk_' + node.pub_key)
+      .attr('r', 5)
       .attr('class', 'selected');
 
     // remove selected line
@@ -165,9 +172,7 @@ export class Graph extends React.Component {
       .attr(
         'class',
         d =>
-          d.edge.node1_pub === selectedPubKey || d.edge.node2_pub === selectedPubKey
-            ? 'selected'
-            : ''
+          d.edge.node1_pub === node.pub_key || d.edge.node2_pub === node.pub_key ? 'selected' : ''
       );
   };
 
@@ -180,5 +185,13 @@ export class Graph extends React.Component {
 
     // perform translation
     this.zoom.translateTo(d3svg, transform.x, transform.y);
+  };
+
+  _findConnectedPubKeys = node => {
+    return this.graphData.links
+      .filter(link => link.edge.node1_pub === node.pub_key || link.edge.node2_pub === node.pub_key)
+      .map(
+        link => (link.edge.node1_pub === node.pub_key ? link.edge.node2_pub : link.edge.node1_pub)
+      );
   };
 }
