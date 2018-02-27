@@ -1,7 +1,6 @@
 const winston = require('winston');
 const express = require('express');
 const lnd = require('./lnd');
-const peerMapper = require('./data/peer-mapper');
 const app = express();
 
 app.get('/api/network', (req, res, next) => getNetwork(req, res).catch(next));
