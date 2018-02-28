@@ -2,32 +2,57 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { FormGroup, Input, Label } from 'reactstrap';
 
-export const NodeListFilters = ({ nodeQuery, showOnlyReachable, filterChanged }) => (
-  <div className="node-list-filter">
-    <FormGroup>
-      <Input
-        bsSize="sm"
-        type="text"
-        placeholder="Find nodes..."
-        value={nodeQuery}
-        onChange={e => filterChanged('nodeQuery', e.target.value)}
-      />
-    </FormGroup>
-    <FormGroup check>
-      <Label check>
-        <Input
-          type="checkbox"
-          checked={!showOnlyReachable}
-          onChange={e => filterChanged('showOnlyReachable', !e.target.checked)}
-        />
-        include unreachable nodes
-      </Label>
-    </FormGroup>
-  </div>
-);
+export class NodeListFilters extends React.Component {
+  static propTypes = {
+    filterNodes: PropTypes.func.isRequired,
+    highlightNodes: PropTypes.func.isRequired,
+    redrawNodes: PropTypes.func.isRequired,
+  };
 
-NodeListFilters.propTypes = {
-  nodeQuery: PropTypes.string.isRequired,
-  showOnlyReachable: PropTypes.bool.isRequired,
-  filterChanged: PropTypes.func.isRequired,
-};
+  state = {
+    nodeQuery: '',
+    showOnlyReachable: false,
+  };
+
+  filterChanged(prop, value) {
+    this.setState({ [prop]: value });
+    this.props.filterNodes(Object.assign({}, this.state, { [prop]: value }));
+  }
+
+  render() {
+    let { nodeQuery, showOnlyReachable } = this.state;
+
+    return (
+      <div className="node-list-filter">
+        <FormGroup>
+          <Input
+            bsSize="sm"
+            type="text"
+            placeholder="Find nodes..."
+            value={nodeQuery}
+            onChange={e => this.filterChanged('nodeQuery', e.target.value)}
+          />
+        </FormGroup>
+        <FormGroup check>
+          <Label check>
+            <Input
+              type="checkbox"
+              checked={!showOnlyReachable}
+              onChange={e => this.filterChanged('showOnlyReachable', !e.target.checked)}
+            />
+            include unreachable nodes
+          </Label>
+        </FormGroup>
+
+        <div className="mt-3">
+          <button className="btn-sm btn-secondary mr-1" onClick={this.props.highlightNodes}>
+            Highlight
+          </button>
+          <button className="btn-sm btn-secondary" onClick={this.props.redrawNodes}>
+            Redraw
+          </button>
+        </div>
+      </div>
+    );
+  }
+}

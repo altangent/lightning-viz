@@ -8,5 +8,5 @@ export const Reachable = ({ reachable, ...props }) => {
 };
 
 Reachable.propTypes = {
-  reachable: PropTypes.bool.isRequired,
+  reachable: PropTypes.bool,
 };

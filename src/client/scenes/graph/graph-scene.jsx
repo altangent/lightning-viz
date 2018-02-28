@@ -8,10 +8,9 @@ export class GraphScene extends React.Component {
     graph: undefined,
     nodeLookup: undefined,
     edgeLookup: undefined,
-    nodeQuery: '',
-    showOnlyReachable: false,
     selectedNode: undefined,
     selectedNodeChannels: undefined,
+    filteredNodes: undefined,
   };
 
   componentWillMount() {
@@ -19,8 +18,7 @@ export class GraphScene extends React.Component {
   }
 
   loadGraph() {
-    let maxNodes = 10000;
-    fetch('/api/graph?nodes=' + maxNodes)
+    fetch('/api/graph')
       .then(res => res.json())
       .then(graph => {
         let nodeLookup = new Map(graph.nodes.map(node => [node.pub_key, node]));
@@ -29,7 +27,8 @@ export class GraphScene extends React.Component {
           edgeLookup.set(edge.node1_pub, (edgeLookup.get(edge.node1_pub) || new Set()).add(edge));
           edgeLookup.set(edge.node2_pub, (edgeLookup.get(edge.node2_pub) || new Set()).add(edge));
         }
-        this.setState({ graph, nodeLookup, edgeLookup });
+        let filteredNodes = graph.nodes.slice();
+        this.setState({ graph, filteredNodes, nodeLookup, edgeLookup });
         this.graphRef.updateGraph(graph);
       });
   }
@@ -38,8 +37,32 @@ export class GraphScene extends React.Component {
     this.graphRef.selectNode(pub_key);
   };
 
-  filterChanged = (key, value) => {
-    this.setState({ [key]: value });
+  highlightNodes = () => {
+    let pub_keys = this.state.filteredNodes.map(n => n.pub_key);
+    this.graphRef.highlightNodes(pub_keys);
+  };
+
+  redrawNodes = () => {
+    let nodes = this.state.filteredNodes;
+    let pubKeySet = new Set(nodes.map(p => p.pub_key));
+    let edges = this.state.graph.edges.filter(
+      e => pubKeySet.has(e.node1_pub) && pubKeySet.has(e.node2_pub)
+    );
+    this.graphRef.redrawGraph({ nodes, edges });
+  };
+
+  filterNodes = ({ nodeQuery, showOnlyReachable }) => {
+    nodeQuery = nodeQuery.replace(/[-[\]/{}()*+?.\\^$|]/g, '\\$&');
+
+    let nodes = this.state.graph.nodes.filter(
+      node =>
+        (!showOnlyReachable || (showOnlyReachable && node.is_reachable)) &&
+        (!nodeQuery ||
+          node.pub_key.match(new RegExp(nodeQuery, 'i')) ||
+          (node.alias && node.alias.match(new RegExp(nodeQuery, 'i'))))
+    );
+
+    this.setState({ filteredNodes: nodes });
   };
 
   onNodeSelected = pub_key => {
@@ -58,8 +81,10 @@ export class GraphScene extends React.Component {
         />
         <NodeListCard
           {...this.state}
-          filterChanged={this.filterChanged}
+          filterNodes={this.filterNodes}
           selectNode={this.selectNode}
+          highlightNodes={this.highlightNodes}
+          redrawNodes={this.redrawNodes}
         />
         <NodeInfoCard {...this.state} />
       </div>

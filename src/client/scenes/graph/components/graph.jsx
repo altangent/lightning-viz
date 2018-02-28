@@ -40,11 +40,22 @@ export class Graph extends React.Component {
     this._renderUpdates();
   }
 
+  redrawGraph(apiGraph) {
+    this._initializeGraph();
+    this.graphData = this._mergeGraphState(apiGraph);
+    this._renderUpdates();
+  }
+
   selectNode = pub_key => {
     let node = this.graphData.nodes.find(node => node.pub_key === pub_key);
-    this._highlightNode(node);
+    this._selectNode(node);
     this._focusNode(node);
     this.props.onNodeSelected(node.pub_key);
+  };
+
+  highlightNodes = pub_keys => {
+    this._drawResetSelections();
+    pub_keys.forEach(this._drawHighlightNode);
   };
 
   _mergeGraphState(json) {
@@ -59,6 +70,8 @@ export class Graph extends React.Component {
 
   _initializeGraph = () => {
     let d3svg = d3.select(this.svgRef);
+    d3svg.selectAll('*').remove();
+
     d3svg
       .attr('width', d3svg.node().parentNode.clientWidth)
       .attr('height', d3svg.node().parentNode.clientHeight);
@@ -139,42 +152,55 @@ export class Graph extends React.Component {
 
   _nodeClicked = d => {
     this.props.onNodeSelected(d.pub_key);
-    this._highlightNode(d);
+    this._selectNode(d);
   };
 
-  _highlightNode = node => {
+  _selectNode = ({ pub_key }) => {
+    this._drawResetSelections();
+    this._drawSelectNode(pub_key);
+    this._drawHighlightConnectedNodes(pub_key);
+  };
+
+  _drawSelectNode = pub_key => {
+    // update selected node
+    d3
+      .select('#pk_' + pub_key)
+      .attr('r', 5)
+      .attr('class', 'selected');
+
+    // update selected channels
+    d3
+      .selectAll('.links line')
+      .attr(
+        'class',
+        d => (d.edge.node1_pub === pub_key || d.edge.node2_pub === pub_key ? 'selected' : '')
+      );
+  };
+
+  _drawHighlightConnectedNodes = pub_key => {
+    let connPubKeys = this._findConnectedPubKeys(pub_key);
+    for (let connPubKey of connPubKeys) {
+      this._drawHighlightNode(connPubKey);
+    }
+  };
+
+  _drawHighlightNode = pub_key => {
+    console.log('highlight', pub_key);
+    d3
+      .select('#pk_' + pub_key)
+      .attr('r', 3)
+      .attr('class', 'highlight');
+  };
+
+  _drawResetSelections = () => {
     // reset all nodes
     d3
       .selectAll('.nodes circle.selected, .nodes circle.highlight')
       .attr('r', 2)
       .attr('class', null);
 
-    // update connected nodes
-    let connPubKeys = this._findConnectedPubKeys(node);
-    for (let connPubKey of connPubKeys) {
-      d3
-        .select('#pk_' + connPubKey)
-        .attr('r', 3)
-        .attr('class', 'highlight');
-    }
-
-    // update current node
-    d3
-      .select('#pk_' + node.pub_key)
-      .attr('r', 5)
-      .attr('class', 'selected');
-
-    // remove selected line
-    d3.selectAll('.links .selected').attr('class', null);
-
-    // add selected lines
-    d3
-      .selectAll('.links line')
-      .attr(
-        'class',
-        d =>
-          d.edge.node1_pub === node.pub_key || d.edge.node2_pub === node.pub_key ? 'selected' : ''
-      );
+    // reset all channels
+    d3.selectAll('.links line.selected').attr('class', null);
   };
 
   _focusNode = node => {
@@ -188,11 +214,9 @@ export class Graph extends React.Component {
     this.zoom.translateTo(d3svg, transform.x, transform.y);
   };
 
-  _findConnectedPubKeys = node => {
+  _findConnectedPubKeys = pub_key => {
     return this.graphData.links
-      .filter(link => link.edge.node1_pub === node.pub_key || link.edge.node2_pub === node.pub_key)
-      .map(
-        link => (link.edge.node1_pub === node.pub_key ? link.edge.node2_pub : link.edge.node1_pub)
-      );
+      .filter(link => link.edge.node1_pub === pub_key || link.edge.node2_pub === pub_key)
+      .map(link => (link.edge.node1_pub === pub_key ? link.edge.node2_pub : link.edge.node1_pub));
   };
 }
