@@ -3,10 +3,12 @@ import { Graph } from './components/graph';
 import { NodeListCard } from './components/node-list/node-list-card';
 import { NodeInfoCard } from './components/node-info/node-info-card';
 import { GraphControls } from './components/graph-controls';
+import { GraphSummary } from './components/graph-summary';
 
 export class GraphScene extends React.Component {
   state = {
-    graph: undefined,
+    fullGraph: undefined,
+    renderedGraph: undefined,
     nodeLookup: undefined,
     edgeLookup: undefined,
     selectedNode: undefined,
@@ -29,7 +31,13 @@ export class GraphScene extends React.Component {
           edgeLookup.set(edge.node2_pub, (edgeLookup.get(edge.node2_pub) || new Set()).add(edge));
         }
         let filteredNodes = graph.nodes.slice();
-        this.setState({ graph, filteredNodes, nodeLookup, edgeLookup });
+        this.setState({
+          fullGraph: graph,
+          renderedGraph: graph,
+          filteredNodes,
+          nodeLookup,
+          edgeLookup,
+        });
         this.graphRef.updateGraph(graph);
       });
   }
@@ -51,16 +59,17 @@ export class GraphScene extends React.Component {
   redrawNodes = () => {
     let nodes = this.state.filteredNodes;
     let pubKeySet = new Set(nodes.map(p => p.pub_key));
-    let edges = this.state.graph.edges.filter(
+    let edges = this.state.fullGraph.edges.filter(
       e => pubKeySet.has(e.node1_pub) && pubKeySet.has(e.node2_pub)
     );
+    this.setState({ renderedGraph: { nodes, edges } });
     this.graphRef.redrawGraph({ nodes, edges });
   };
 
   filterNodes = ({ nodeQuery, showOnlyReachable }) => {
     nodeQuery = nodeQuery.replace(/[-[\]/{}()*+?.\\^$|]/g, '\\$&');
 
-    let nodes = this.state.graph.nodes.filter(
+    let nodes = this.state.fullGraph.nodes.filter(
       node =>
         (!showOnlyReachable || (showOnlyReachable && node.is_reachable)) &&
         (!nodeQuery ||
@@ -80,11 +89,8 @@ export class GraphScene extends React.Component {
   render() {
     return (
       <div className="graph-container">
-        <Graph
-          ref={el => (this.graphRef = el)}
-          onNodeSelected={this.onNodeSelected}
-          graph={this.state.graph}
-        />
+        <Graph ref={el => (this.graphRef = el)} onNodeSelected={this.onNodeSelected} />
+        <GraphSummary graph={this.state.renderedGraph} />
         <GraphControls
           resetZoomPan={this.graphRef && this.graphRef.resetZoomPan}
           zoomIn={this.graphRef && this.graphRef.zoomIn}

@@ -8,7 +8,7 @@ export const NodeListCard = ({ filteredNodes, ...props }) => {
 
   return (
     <div className="graph-info card">
-      <h3 className="card-header">Graph Details</h3>
+      <h3 className="card-header">Nodes</h3>
       <div className="card-body">
         <NodeListFilters nodes={filteredNodes} {...props} />
         <hr />
