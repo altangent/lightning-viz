@@ -12,6 +12,7 @@ export class NodeListFilters extends React.Component {
   state = {
     nodeQuery: '',
     showOnlyReachable: false,
+    showOnlyConnected: false,
   };
 
   filterChanged(prop, value) {
@@ -20,7 +21,7 @@ export class NodeListFilters extends React.Component {
   }
 
   render() {
-    let { nodeQuery, showOnlyReachable } = this.state;
+    let { nodeQuery, showOnlyReachable, showOnlyConnected } = this.state;
 
     return (
       <div className="node-list-filter">
@@ -37,6 +38,16 @@ export class NodeListFilters extends React.Component {
           <Label check>
             <Input
               type="checkbox"
+              checked={!showOnlyConnected}
+              onChange={e => this.filterChanged('showOnlyConnected', !e.target.checked)}
+            />
+            include orphans
+          </Label>
+        </FormGroup>
+        <FormGroup check>
+          <Label check>
+            <Input
+              type="checkbox"
               checked={!showOnlyReachable}
               onChange={e => this.filterChanged('showOnlyReachable', !e.target.checked)}
             />
@@ -44,7 +55,7 @@ export class NodeListFilters extends React.Component {
           </Label>
         </FormGroup>
 
-        <div className="mt-3">
+        <div className="mt-3 text-right">
           <button className="btn-sm btn-secondary mr-1" onClick={this.props.highlightNodes}>
             Highlight
           </button>

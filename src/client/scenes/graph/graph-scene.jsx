@@ -66,11 +66,13 @@ export class GraphScene extends React.Component {
     this.graphRef.redrawGraph({ nodes, edges });
   };
 
-  filterNodes = ({ nodeQuery, showOnlyReachable }) => {
+  filterNodes = ({ nodeQuery, showOnlyReachable, showOnlyConnected }) => {
     nodeQuery = nodeQuery.replace(/[-[\]/{}()*+?.\\^$|]/g, '\\$&');
-
+    let { edgeLookup } = this.state;
     let nodes = this.state.fullGraph.nodes.filter(
       node =>
+        (!showOnlyConnected ||
+          (showOnlyConnected && (edgeLookup.get(node.pub_key) || new Set()).size)) &&
         (!showOnlyReachable || (showOnlyReachable && node.is_reachable)) &&
         (!nodeQuery ||
           node.pub_key.match(new RegExp(nodeQuery, 'i')) ||
