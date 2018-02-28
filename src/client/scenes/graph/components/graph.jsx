@@ -63,6 +63,37 @@ export class Graph extends React.Component {
     pub_keys.forEach(this._drawHighlightNode);
   };
 
+  resetZoomPan = () => {
+    let d3svg = d3.select(this.svgRef);
+    let width = d3svg.attr('width');
+    let height = d3svg.attr('height');
+    let transform = d3.zoomTransform(d3svg).translate(width / 2, height / 2);
+    this.zoom.translateTo(d3svg, transform.x, transform.y);
+    this.zoom.scaleTo(d3svg, 1);
+  };
+
+  zoomIn = () => {
+    this.zooming = true;
+    this._zoom(1.02);
+  };
+
+  zoomOut = () => {
+    this.zooming = true;
+    this._zoom(0.98);
+  };
+
+  zoomStop = () => {
+    this.zooming = false;
+  };
+
+  ///////////////////////////////////////////////
+
+  _zoom = amt => {
+    let d3svg = d3.select(this.svgRef);
+    this.zoom.scaleBy(d3svg, amt);
+    if (this.zooming) setTimeout(() => this._zoom(amt), 10);
+  };
+
   _mergeGraphState(json) {
     let nodes = json.nodes.map(p => JSON.parse(JSON.stringify(p)));
     let links = json.edges.map(p => JSON.parse(JSON.stringify(p))).map(p => ({

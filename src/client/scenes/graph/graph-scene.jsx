@@ -2,6 +2,7 @@ import React from 'react';
 import { Graph } from './components/graph';
 import { NodeListCard } from './components/node-list/node-list-card';
 import { NodeInfoCard } from './components/node-info/node-info-card';
+import { GraphControls } from './components/graph-controls';
 
 export class GraphScene extends React.Component {
   state = {
@@ -83,6 +84,12 @@ export class GraphScene extends React.Component {
           ref={el => (this.graphRef = el)}
           onNodeSelected={this.onNodeSelected}
           graph={this.state.graph}
+        />
+        <GraphControls
+          resetZoomPan={this.graphRef && this.graphRef.resetZoomPan}
+          zoomIn={this.graphRef && this.graphRef.zoomIn}
+          zoomOut={this.graphRef && this.graphRef.zoomOut}
+          zoomStop={this.graphRef && this.graphRef.zoomStop}
         />
         <NodeListCard
           {...this.state}

@@ -12,14 +12,16 @@
 
 .graph-controls {
   position: fixed;
+  display: flex;
+  justify-content: center;
   z-index: 1;
-  top: 0.25rem;
-  right: 0.25rem;
-  background-color: #333;
-  color: #ddd;
-  padding: 0.25rem;
-  opacity: 0.8;
-  width: 300px;
+  bottom: 0.25rem;
+  width: 100%;
+
+  button {
+    margin-left: 0.1rem;
+    margin-right: 0.1rem;
+  }
 }
 
 .graph-info {
