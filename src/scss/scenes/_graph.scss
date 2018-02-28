@@ -120,7 +120,11 @@
   width: 300px;
 
   .node-info-title {
+    display: block;
     white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    margin-right: 2rem;
   }
 }
 

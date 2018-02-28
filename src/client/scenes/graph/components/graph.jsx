@@ -36,6 +36,7 @@ export class Graph extends React.Component {
   }
 
   updateGraph(apiGraph) {
+    // TODO, this should merge nodes into the state graph
     this.graphData = this._mergeGraphState(apiGraph);
     this._renderUpdates();
   }
@@ -53,14 +54,18 @@ export class Graph extends React.Component {
     this.props.onNodeSelected(node.pub_key);
   };
 
+  deselectNode = () => {
+    this._drawResetSelections();
+  };
+
   highlightNodes = pub_keys => {
     this._drawResetSelections();
     pub_keys.forEach(this._drawHighlightNode);
   };
 
   _mergeGraphState(json) {
-    let nodes = json.nodes;
-    let links = json.edges.map(p => ({
+    let nodes = json.nodes.map(p => JSON.parse(JSON.stringify(p)));
+    let links = json.edges.map(p => JSON.parse(JSON.stringify(p))).map(p => ({
       source: p.node1_pub,
       target: p.node2_pub,
       edge: p,
@@ -185,7 +190,6 @@ export class Graph extends React.Component {
   };
 
   _drawHighlightNode = pub_key => {
-    console.log('highlight', pub_key);
     d3
       .select('#pk_' + pub_key)
       .attr('r', 3)

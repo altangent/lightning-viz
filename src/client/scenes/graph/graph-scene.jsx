@@ -37,6 +37,11 @@ export class GraphScene extends React.Component {
     this.graphRef.selectNode(pub_key);
   };
 
+  deselectNode = () => {
+    this.setState({ selectedNode: null, selectedNodeChannels: null });
+    this.graphRef.deselectNode();
+  };
+
   highlightNodes = () => {
     let pub_keys = this.state.filteredNodes.map(n => n.pub_key);
     this.graphRef.highlightNodes(pub_keys);
@@ -67,7 +72,7 @@ export class GraphScene extends React.Component {
 
   onNodeSelected = pub_key => {
     let selectedNode = this.state.nodeLookup.get(pub_key);
-    let selectedNodeChannels = Array.from(this.state.edgeLookup.get(pub_key));
+    let selectedNodeChannels = Array.from(this.state.edgeLookup.get(pub_key) || []);
     this.setState({ selectedNode, selectedNodeChannels });
   };
 
@@ -86,7 +91,7 @@ export class GraphScene extends React.Component {
           highlightNodes={this.highlightNodes}
           redrawNodes={this.redrawNodes}
         />
-        <NodeInfoCard {...this.state} />
+        <NodeInfoCard deselectNode={this.deselectNode} {...this.state} />
       </div>
     );
   }
