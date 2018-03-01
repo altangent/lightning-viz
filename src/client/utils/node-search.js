@@ -5,6 +5,13 @@ module.exports = {
 
 function validate(input) {
   if (!input) return true;
+  try {
+    let tokens = tokenize(input);
+    let parseTree = buildParseTree(tokens);
+    return validateParseTree(parseTree);
+  } catch (ex) {
+    return false;
+  }
 }
 
 function search(graph, input) {
@@ -158,6 +165,35 @@ function filterByTreeNode(nodes, parseNode) {
     let values = new Set(parseNode.right.value);
     return nodes.filter(node => values.has(getNodeValue(node, prop)));
   }
+}
+
+function validateParseTree(parseTree) {
+  let result;
+  if (!parseTree) {
+    result = false;
+  } else if (
+    parseTree.type === 'and' ||
+    parseTree.type === 'or' ||
+    parseTree.type === 'eq' ||
+    parseTree.type === 'gt' ||
+    parseTree.type === 'gte' ||
+    parseTree.type === 'lt' ||
+    parseTree.type === 'lte' ||
+    parseTree.type === 'like' ||
+    parseTree.type === 'in'
+  ) {
+    result = validateParseTree(parseTree.left) && validateParseTree(parseTree.right);
+  } else if (parseTree.type === 'array') {
+    result = parseTree.value.length > 0;
+  } else if (parseTree.type === 'property') {
+    let props = new Set(['alias', 'is_reachable', 'country', 'channels', 'capacity']);
+    result = props.has(parseTree.value);
+  } else if (parseTree.type === 'string' || parseTree.type === 'bool' || parseTree.type === 'int') {
+    result = parseTree.value !== undefined;
+  }
+
+  console.log(parseTree, result);
+  return result;
 }
 
 function getNodeValue(node, prop) {
