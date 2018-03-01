@@ -41,11 +41,11 @@ function tokenize(input) {
     else if (input.match(/^,/)) pushAdvance({ type: 'comma' }, 1);
     else if (input.match(/^and /)) pushAdvance({ type: 'and' }, 3);
     else if (input.match(/^or /)) pushAdvance({ type: 'or' }, 2);
-    else if (input.match(/^=/)) pushAdvance({ type: 'eq' }, 2);
+    else if (input.match(/^=/)) pushAdvance({ type: 'eq' }, 1);
+    else if (input.match(/^>=/)) pushAdvance({ type: 'gte' }, 2);
+    else if (input.match(/^<=/)) pushAdvance({ type: 'lte' }, 2);
     else if (input.match(/^>/)) pushAdvance({ type: 'gt' }, 1);
     else if (input.match(/^</)) pushAdvance({ type: 'lt' }, 1);
-    else if (input.match(/^>=/)) pushAdvance({ type: 'gte' }, 1);
-    else if (input.match(/^<=/)) pushAdvance({ type: 'lte' }, 1);
     else if (input.match(/^in /)) pushAdvance({ type: 'in' }, 2);
     else if (input.match(/^like /)) pushAdvance({ type: 'like' }, 4);
     else if ((match = input.match(/^(true|false)/)))
@@ -185,13 +185,12 @@ function validateParseTree(parseTree) {
     result = validateParseTree(parseTree.left) && validateParseTree(parseTree.right);
   } else if (parseTree.type === 'array') {
     result = parseTree.value.length > 0;
+  } else if (parseTree.type === 'string' || parseTree.type === 'bool' || parseTree.type === 'int') {
+    result = parseTree.value !== undefined;
   } else if (parseTree.type === 'property') {
     let props = new Set(['alias', 'is_reachable', 'country', 'channels', 'capacity']);
     result = props.has(parseTree.value);
-  } else if (parseTree.type === 'string' || parseTree.type === 'bool' || parseTree.type === 'int') {
-    result = parseTree.value !== undefined;
   }
-
   console.log(parseTree, result);
   return result;
 }

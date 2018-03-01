@@ -31,6 +31,12 @@ export class GraphScene extends React.Component {
           edgeLookup.set(edge.node1_pub, (edgeLookup.get(edge.node1_pub) || new Set()).add(edge));
           edgeLookup.set(edge.node2_pub, (edgeLookup.get(edge.node2_pub) || new Set()).add(edge));
         }
+        for (let node of graph.nodes) {
+          node.channels = (edgeLookup.get(node.pub_key) || new Set()).size;
+          node.capacity = Array.from(edgeLookup.get(node.pub_key) || new Set())
+            .map(p => parseInt(p.capacity))
+            .reduce((sum, val) => sum + val, 0);
+        }
         let filteredNodes = graph.nodes.slice();
         this.setState({
           fullGraph: graph,
