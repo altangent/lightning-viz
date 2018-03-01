@@ -45,7 +45,7 @@ export class GraphScene extends React.Component {
           nodeLookup,
           edgeLookup,
         });
-        this.graphRef.updateGraph(graph);
+        this.graphRef.redrawGraph(graph);
       });
   }
 

@@ -23,10 +23,6 @@ export class Graph extends React.Component {
     onNodeSelected: PropTypes.func,
   };
 
-  componentDidMount() {
-    this._initializeGraph();
-  }
-
   shouldComponentUpdate() {
     return false;
   }
@@ -42,8 +38,8 @@ export class Graph extends React.Component {
   }
 
   redrawGraph(apiGraph) {
-    this._initializeGraph();
     this.graphData = this._mergeGraphState(apiGraph);
+    this._initializeGraph();
     this._renderUpdates();
   }
 
@@ -133,7 +129,12 @@ export class Graph extends React.Component {
           .distanceMax(1000)
       )
       .force('center', d3.forceCenter(width / 2, height / 2))
-      .on('tick', this._simulationTick);
+      .force('x', d3.forceX(width / 2).strength(0.01))
+      .force('y', d3.forceY(height / 2).strength(0.01))
+      .on('tick', this._simulationTick)
+      .on('end', () => {
+        console.log('render complete');
+      });
 
     // construct link selection method
     this.links = zoomGroup
@@ -183,7 +184,7 @@ export class Graph extends React.Component {
     // update the simulation
     this.simulation.nodes(nodes);
     this.simulation.force('link').links(links);
-    this.simulation.alpha(0.5).restart(); // adjust to allow first run to finish
+    this.simulation.restart(); // adjust to allow first run to finish
   };
 
   _nodeClicked = d => {
