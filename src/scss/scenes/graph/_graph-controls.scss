@@ -1,0 +1,13 @@
+.graph-controls {
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  z-index: 1;
+  bottom: 0.25rem;
+  width: 100%;
+
+  button {
+    margin-left: 0.1rem;
+    margin-right: 0.1rem;
+  }
+}

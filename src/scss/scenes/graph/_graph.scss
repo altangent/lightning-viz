@@ -1,0 +1,42 @@
+.graph-container {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.links line {
+  stroke: #999;
+  stroke-width: 1px;
+  stroke-opacity: 0.1;
+}
+
+.links line.selected {
+  stroke: #338dc9;
+  stroke-width: 1px;
+  stroke-opacity: 0.5;
+  stroke-dasharray: 9, 3;
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+
+.nodes circle {
+  fill: #555;
+  stroke: #eee;
+  stroke-width: 0.5px;
+}
+
+.nodes .selected {
+  stroke: #f04419;
+  stroke-width: 2px;
+}
+
+.nodes .highlight {
+  stroke: #f79337;
+  stroke-width: 2px;
+}

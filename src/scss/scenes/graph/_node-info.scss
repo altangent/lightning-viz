@@ -1,0 +1,61 @@
+.node-info {
+  position: fixed;
+  z-index: 1;
+  top: 0.25rem;
+  bottom: 0.25rem;
+  right: 0.25rem;
+  background-color: #333;
+  color: #ddd;
+  padding: 0.25rem;
+  opacity: 0.85;
+  width: 300px;
+
+  .node-info-title {
+    display: block;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    margin-right: 2rem;
+  }
+}
+
+.node-channel-list {
+  height: 100%;
+  overflow-y: scroll;
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.node-channel {
+  margin-bottom: 0.75rem;
+
+  .channel-source-label,
+  .channel-target-label {
+    font-size: 0.8em;
+    width: 50%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .channel-source-label {
+    float: left;
+    text-align: left;
+  }
+  .channel-target-label {
+    float: right;
+    text-align: right;
+  }
+  .channel-capacity {
+    margin-top: -0.4rem;
+    text-align: center;
+    font-size: 0.8em;
+  }
+  .channel-viz {
+    line {
+      stroke: #338dc9;
+      stroke-width: 1px;
+      stroke-opacity: 0.5;
+      stroke-dasharray: 9, 3;
+    }
+  }
+}

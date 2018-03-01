@@ -1,0 +1,23 @@
+.node-list-filter {
+  .form-group {
+    display: flex;
+  }
+  .input-group {
+    flex: 1 1 auto;
+  }
+  .query-info-button {
+    flex: 1 0;
+    margin-left: 2px;
+  }
+}
+
+.info-icon {
+  text-align: right;
+  font-size: 1.2em;
+  cursor: pointer;
+  line-height: 26px;
+
+  &:hover {
+    color: #fff;
+  }
+}
