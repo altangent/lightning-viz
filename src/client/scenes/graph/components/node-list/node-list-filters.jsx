@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FormGroup, Input, Label } from 'reactstrap';
+import { FormGroup, Input } from 'reactstrap';
 
 export class NodeListFilters extends React.Component {
   static propTypes = {
@@ -10,52 +10,35 @@ export class NodeListFilters extends React.Component {
   };
 
   state = {
-    nodeQuery: '',
-    showOnlyReachable: false,
-    showOnlyConnected: false,
+    query: '',
+    powerMode: false,
   };
 
-  filterChanged(prop, value) {
-    this.setState({ [prop]: value });
-    this.props.filterNodes(Object.assign({}, this.state, { [prop]: value }));
-  }
+  queryChanged = e => {
+    if (e.target.value.startsWith('power:')) {
+      this.setState({ query: '', powerMode: true });
+    } else {
+      this.setState({ query: e.target.value });
+    }
+  };
+
+  queryKeyUp = e => {
+    if (e.key === 'Backspace' && this.state.powerMode && !this.state.query)
+      this.setState({ powerMode: false });
+  };
+
+  search = e => {
+    if (e) e.preventDefault();
+    let { query, powerMode } = this.state;
+    if (powerMode) this.props.filterNodes(query);
+    else this.props.filterNodes(`alias like '*${query}*'`);
+  };
 
   render() {
-    let { nodeQuery, showOnlyReachable, showOnlyConnected } = this.state;
-
+    let { query, powerMode } = this.state;
     return (
       <div className="node-list-filter">
-        <FormGroup>
-          <Input
-            bsSize="sm"
-            type="text"
-            placeholder="Find nodes..."
-            value={nodeQuery}
-            onChange={e => this.filterChanged('nodeQuery', e.target.value)}
-          />
-        </FormGroup>
-        <FormGroup check>
-          <Label check>
-            <Input
-              type="checkbox"
-              checked={!showOnlyConnected}
-              onChange={e => this.filterChanged('showOnlyConnected', !e.target.checked)}
-            />
-            include orphans
-          </Label>
-        </FormGroup>
-        <FormGroup check>
-          <Label check>
-            <Input
-              type="checkbox"
-              checked={!showOnlyReachable}
-              onChange={e => this.filterChanged('showOnlyReachable', !e.target.checked)}
-            />
-            include unreachable nodes
-          </Label>
-        </FormGroup>
-
-        <div className="mt-3 text-right">
+        <div className="mb-3 text-center">
           <button className="btn-sm btn-secondary mr-1" onClick={this.props.highlightNodes}>
             Highlight
           </button>
@@ -63,6 +46,34 @@ export class NodeListFilters extends React.Component {
             Redraw
           </button>
         </div>
+        <form onSubmit={this.search}>
+          <FormGroup>
+            <div className="input-group input-group-sm">
+              {powerMode && (
+                <div className="input-group-prepend">
+                  <div className="input-group-text">Power:</div>
+                </div>
+              )}
+              <Input
+                bsSize="sm"
+                type="text"
+                placeholder={!powerMode ? 'Search by alias...' : 'Search by query...'}
+                value={query}
+                onChange={this.queryChanged}
+                onKeyUp={this.queryKeyUp}
+              />
+              <div className="input-group-append">
+                <button
+                  className="btn btn-sm btn-secondary"
+                  style={{ width: '60px' }}
+                  onClick={this.search}
+                >
+                  Search
+                </button>
+              </div>
+            </div>
+          </FormGroup>
+        </form>
       </div>
     );
   }

@@ -4,6 +4,7 @@ import { NodeListCard } from './components/node-list/node-list-card';
 import { NodeInfoCard } from './components/node-info/node-info-card';
 import { GraphControls } from './components/graph-controls';
 import { GraphSummary } from './components/graph-summary';
+import nodeSearch from '../../utils/node-search';
 
 export class GraphScene extends React.Component {
   state = {
@@ -66,19 +67,8 @@ export class GraphScene extends React.Component {
     this.graphRef.redrawGraph({ nodes, edges });
   };
 
-  filterNodes = ({ nodeQuery, showOnlyReachable, showOnlyConnected }) => {
-    nodeQuery = nodeQuery.replace(/[-[\]/{}()*+?.\\^$|]/g, '\\$&');
-    let { edgeLookup } = this.state;
-    let nodes = this.state.fullGraph.nodes.filter(
-      node =>
-        (!showOnlyConnected ||
-          (showOnlyConnected && (edgeLookup.get(node.pub_key) || new Set()).size)) &&
-        (!showOnlyReachable || (showOnlyReachable && node.is_reachable)) &&
-        (!nodeQuery ||
-          node.pub_key.match(new RegExp(nodeQuery, 'i')) ||
-          (node.alias && node.alias.match(new RegExp(nodeQuery, 'i'))))
-    );
-
+  filterNodes = query => {
+    let nodes = nodeSearch.search(this.state.fullGraph, query);
     this.setState({ filteredNodes: nodes });
   };
 
