@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FormGroup, Input } from 'reactstrap';
 import nodeSearch from '../../../../utils/node-search';
+import { QueryInfo } from './query-info';
 
 export class NodeListFilters extends React.Component {
   static propTypes = {
@@ -52,18 +52,17 @@ export class NodeListFilters extends React.Component {
             Redraw
           </button>
         </div>
-        <form onSubmit={this.search}>
-          <FormGroup>
+        <form className="form" onSubmit={this.search}>
+          <div className="form-group">
             <div className="input-group input-group-sm">
               {powerMode && (
                 <div className="input-group-prepend">
                   <div className="input-group-text">Query:</div>
                 </div>
               )}
-              <Input
-                bsSize="sm"
+              <input
                 type="text"
-                className={'form-control' + (invalid ? ' is-invalid' : '')}
+                className={'form-control form-control-sm' + (invalid ? ' is-invalid' : '')}
                 placeholder={!powerMode ? 'Search by alias...' : 'Search by query...'}
                 value={query}
                 onChange={this.queryChanged}
@@ -79,7 +78,8 @@ export class NodeListFilters extends React.Component {
                 </button>
               </div>
             </div>
-          </FormGroup>
+            <QueryInfo />
+          </div>
         </form>
       </div>
     );

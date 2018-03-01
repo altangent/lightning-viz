@@ -7,7 +7,7 @@ export const NodeListCard = ({ filteredNodes, ...props }) => {
   if (!filteredNodes) return '';
 
   return (
-    <div className="graph-info card">
+    <div className="nodes-card card">
       <h3 className="card-header">Nodes</h3>
       <div className="card-body">
         <NodeListFilters nodes={filteredNodes} {...props} />
