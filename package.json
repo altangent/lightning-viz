@@ -1,5 +1,5 @@
 {
-  "name": "lightningportal",
+  "name": "lightning-viz",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -16,7 +16,14 @@
     "watch:scss": "node-sass -o dist/css src/scss/app.scss && node-sass -w -o dist/css src/scss/app.scss",
     "watch:server": "nodemon --ignore dist --ignore src/client src/server/server"
   },
-  "keywords": [],
+  "keywords": [
+    "bitcoin",
+    "litecoin",
+    "lightning network",
+    "vizualizer",
+    "force graph",
+    "bcashisascam"
+  ],
   "author": "Brian Mancini <bmancini@gmail.com>",
   "license": "MIT",
   "dependencies": {
