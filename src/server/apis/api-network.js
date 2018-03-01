@@ -1,5 +1,5 @@
 const express = require('express');
-const graphService = require('./domain/graph-service');
+const graphService = require('../domain/graph-service');
 const app = express();
 
 app.get('/api/graph', (req, res, next) => getGraph(req, res).catch(next));
