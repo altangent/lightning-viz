@@ -26,6 +26,7 @@
     "compression": "^1.7.2",
     "d3": "^4.13.0",
     "express": "^4.16.2",
+    "flag-icon-css": "^3.0.0",
     "level": "^3.0.0",
     "lnd-async": "^1.0.3",
     "moment": "^2.20.1",

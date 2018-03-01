@@ -3,6 +3,9 @@
 @import './_bootstrap-variables.scss';
 @import '../../node_modules/bootstrap/scss/bootstrap.scss';
 
+// Flags
+@import '../../node_modules/flag-icon-css/sass/flag-icon.scss';
+
 // Components
 @import './components/_circle.scss';
 @import './components/_close-btn.scss';

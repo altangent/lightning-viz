@@ -9,6 +9,11 @@ export const NodeListItem = ({ node, selectNode }) => (
       <ColorCircle color={node.color} />
     </div>
     <div className="node-alias">{node.alias || node.pub_key}</div>
+    <div className="node-country">
+      {node.geo_info && (
+        <span className={'flag-icon flag-icon-' + node.geo_info.country_code.toLowerCase()} />
+      )}
+    </div>
     <div className="node-reachable">
       <Reachable reachable={node.is_reachable} />
     </div>

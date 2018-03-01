@@ -43,6 +43,10 @@
   list-style-type: none;
   padding-left: 0;
 
+  .flag-icon {
+    font-size: 0.85em;
+  }
+
   .node-list-item {
     cursor: default;
     display: flex;

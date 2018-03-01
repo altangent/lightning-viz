@@ -25,6 +25,10 @@ app.use(compression());
 app.use('/public', serveStatic(path.join(__dirname, '../public')));
 app.use('/public/app', serveStatic(path.join(__dirname, '../../dist/app')));
 app.use('/public/css', serveStatic(path.join(__dirname, '../../dist/css')));
+app.use(
+  '/public/flags',
+  serveStatic(path.join(__dirname, '../../node_modules/flag-icon-css/flags'))
+);
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/index.html'));
