@@ -6,10 +6,10 @@ import { NodeListSummary } from './node-list-summary';
 
 export const NodeListCard = ({ fullGraph, filteredNodes, ...props }) => {
   if (!filteredNodes) return '';
-  let { chains, testnet } = fullGraph;
+  let { testnet } = fullGraph;
   return (
     <div className="nodes-card card">
-      <h3 className="card-header">{chains[0].toUpperCase() + (testnet ? ' - Testnet' : '')}</h3>
+      <h3 className="card-header">{testnet ? 'Testnet' : 'Mainnet'} Nodes</h3>
       <div className="card-body">
         <NodeListFilters nodes={filteredNodes} {...props} />
         <NodeList nodes={filteredNodes} {...props} />
