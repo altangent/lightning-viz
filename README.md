@@ -2,7 +2,10 @@
 
 This a visualizer for the Bitcoin Lightning Network. It can apply to mainnet or testnet depending what mode LND is running under.
 
-The server periodically attempt to connect to peers to determing whether they are reachable. The server will also collect geo-location information on nodes that have addresses configured.
+Lightning-viz supports advanced node querying (enter `query:` into the search bar) and remapping of the graph based on the node search results.
+
+The server also periodically pings peers to determine their connectivity. The server collects geo-location data on nodes that have an address configured.
+
 
 ## Installation
 
