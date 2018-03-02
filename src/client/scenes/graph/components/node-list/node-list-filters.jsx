@@ -6,8 +6,6 @@ import { QueryInfo } from './query-info';
 export class NodeListFilters extends React.Component {
   static propTypes = {
     filterNodes: PropTypes.func.isRequired,
-    highlightNodes: PropTypes.func.isRequired,
-    redrawNodes: PropTypes.func.isRequired,
   };
 
   state = {
@@ -44,14 +42,6 @@ export class NodeListFilters extends React.Component {
     let { query, powerMode, invalid } = this.state;
     return (
       <div className="node-list-filter">
-        <div className="mb-3 text-center">
-          <button className="btn-sm btn-secondary mr-1" onClick={this.props.highlightNodes}>
-            Highlight
-          </button>
-          <button className="btn-sm btn-secondary" onClick={this.props.redrawNodes}>
-            Redraw
-          </button>
-        </div>
         <form className="form" onSubmit={this.search}>
           <div className="form-group">
             <div className="input-group input-group-sm">

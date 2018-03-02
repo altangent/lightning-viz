@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 export const GraphControls = ({ resetZoomPan, zoomIn, zoomOut, zoomStop }) => (
   <div className="graph-controls">
     <button className="btn btn-sm btn-secondary" onClick={resetZoomPan}>
-      Reset
+      Recenter
     </button>
     <button className="btn btn-sm btn-secondary" onMouseDown={zoomOut} onMouseUp={zoomStop}>
       &minus;
