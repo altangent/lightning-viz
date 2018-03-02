@@ -8,6 +8,7 @@ module.exports = {
 
 async function loadGraph() {
   winston.profile('load graph');
+  let info = await lnd.client.getInfo({});
   let graph = await lnd.client.describeGraph({});
 
   for (let i = 0; i < graph.nodes.length; i++) {
@@ -16,6 +17,8 @@ async function loadGraph() {
     graph.nodes[i] = Object.assign(node, peerInfo);
   }
 
+  graph.chains = info.chains;
+  graph.testnet = info.testnet;
   winston.profile('load graph');
   return graph;
 }
