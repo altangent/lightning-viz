@@ -9,7 +9,7 @@ export class NodeListFilters extends React.Component {
   };
 
   state = {
-    query: '',
+    query: "country in ('US','CA')",
     invalid: false,
     queryMode: true,
   };
@@ -51,7 +51,6 @@ export class NodeListFilters extends React.Component {
               <input
                 type="text"
                 className={'form-control form-control-sm' + (invalid ? ' is-invalid' : '')}
-                placeholder={!queryMode ? 'Search by alias...' : 'Search by query...'}
                 value={query}
                 onChange={this.queryChanged}
                 onKeyDown={this.queryKeyDown}
