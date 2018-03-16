@@ -6,12 +6,9 @@ Lightning-viz supports advanced node querying (enter `query:` into the search ba
 
 The server also periodically pings peers to determine their connectivity. The server collects geo-location data on nodes that have an address configured.
 
-
 ## Installation
 
-LND Explorer requires LND 0.3-alpha as of Feb 24, 2018 commit e5f9b28e395507d860fb2d08c2f01f5889c14e39.
-
-Run LND Explorer against a local installation on LND:
+lightning-viz requires LND 0.4.0-beta to be installed locally.
 
 ```
 git clone https://github.com/altangent/lightning-viz
