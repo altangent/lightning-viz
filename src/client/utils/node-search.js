@@ -156,7 +156,7 @@ function filterByTreeNode(nodes, parseNode) {
     let value = parseNode.right.value;
     value = value.replace(/[-[\]/{}()+?.\\^$|]/g, '\\$&');
     value = value.replace(/\*/g, '.*?');
-    value = new RegExp('^' + value);
+    value = new RegExp('^' + value, 'i');
     return nodes.filter(node => getNodeValue(node, prop).match(value));
   }
 
