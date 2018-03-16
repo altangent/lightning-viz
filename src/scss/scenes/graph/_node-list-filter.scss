@@ -9,6 +9,17 @@
     flex: 1 0;
     margin-left: 0.1875rem;
   }
+
+  .input-group-text {
+    padding: 0 !important;
+  }
+  select.form-control {
+    height: 24px !important;
+    padding: 0;
+    border: 0;
+    color: #495057;
+    background-color: #e9ecef;
+  }
 }
 
 .info-icon {

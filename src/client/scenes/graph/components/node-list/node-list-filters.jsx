@@ -11,27 +11,22 @@ export class NodeListFilters extends React.Component {
   state = {
     query: '',
     invalid: false,
-    powerMode: false,
+    queryMode: true,
   };
 
   queryChanged = e => {
-    if (e.target.value.startsWith('query:')) {
-      this.setState({ query: '', powerMode: true, invalid: false });
-    } else {
-      this.setState({ query: e.target.value, invalid: false });
-    }
+    this.setState({ query: e.target.value, invalid: false });
   };
 
-  queryKeyDown = e => {
-    if (e.key === 'Backspace' && this.state.powerMode && !this.state.query)
-      this.setState({ powerMode: false, invalid: false });
+  modeChange = e => {
+    this.setState({ queryMode: e.target.value === 'query', query: '', invalid: false });
   };
 
   search = e => {
     if (e) e.preventDefault();
-    let { query, powerMode } = this.state;
+    let { query, queryMode } = this.state;
 
-    if (powerMode) {
+    if (queryMode) {
       let valid = nodeSearch.validate(query);
       if (valid) this.props.filterNodes(query);
       else this.setState({ invalid: true });
@@ -39,21 +34,24 @@ export class NodeListFilters extends React.Component {
   };
 
   render() {
-    let { query, powerMode, invalid } = this.state;
+    let { query, queryMode, invalid } = this.state;
     return (
       <div className="node-list-filter">
         <form className="form" onSubmit={this.search}>
           <div className="form-group">
             <div className="input-group input-group-sm">
-              {powerMode && (
-                <div className="input-group-prepend">
-                  <div className="input-group-text">Query:</div>
+              <div className="input-group-prepend">
+                <div className="input-group-text">
+                  <select className="form-control form-control-sm" onChange={this.modeChange}>
+                    <option value="query">Query:</option>
+                    <option value="">Alias:</option>
+                  </select>
                 </div>
-              )}
+              </div>
               <input
                 type="text"
                 className={'form-control form-control-sm' + (invalid ? ' is-invalid' : '')}
-                placeholder={!powerMode ? 'Search by alias...' : 'Search by query...'}
+                placeholder={!queryMode ? 'Search by alias...' : 'Search by query...'}
                 value={query}
                 onChange={this.queryChanged}
                 onKeyDown={this.queryKeyDown}
@@ -68,7 +66,7 @@ export class NodeListFilters extends React.Component {
                 </button>
               </div>
             </div>
-            <QueryInfo />
+            {queryMode && <QueryInfo />}
           </div>
         </form>
       </div>
