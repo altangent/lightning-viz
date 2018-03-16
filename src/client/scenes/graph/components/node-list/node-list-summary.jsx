@@ -8,10 +8,10 @@ export const NodeListSummary = ({ selectedCount, totalCount, highlightNodes, red
     </div>
     <div className="summary-controls">
       <button className="btn btn-sm btn-secondary mr-1" onClick={highlightNodes}>
-        Highlight selected
+        Highlight nodes
       </button>
       <button className="btn btn-sm btn-secondary" onClick={redrawNodes}>
-        Draw selected
+        Draw nodes
       </button>
     </div>
   </div>
