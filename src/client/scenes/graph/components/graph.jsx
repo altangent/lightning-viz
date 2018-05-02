@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import * as d3 from 'd3';
+import * as d3Sim from '../../../../shared/d3-simulation';
 
 /**
  * This component is simply a wrapper for D3 rendered
@@ -63,9 +64,9 @@ export class Graph extends React.Component {
     let d3svg = d3.select(this.svgRef);
     let width = d3svg.attr('width');
     let height = d3svg.attr('height');
-    let transform = d3.zoomTransform(d3svg).translate(width / 2, height / 2);
+    let transform = d3.zoomTransform(d3svg).translate(width / 2 - 800, height / 2 - 400);
     this.zoom.translateTo(d3svg, transform.x, transform.y);
-    this.zoom.scaleTo(d3svg, 1);
+    this.zoom.scaleTo(d3svg, 0.5);
   };
 
   zoomIn = () => {
@@ -117,24 +118,13 @@ export class Graph extends React.Component {
     });
     d3svg.call(this.zoom);
 
+    // initialize zoom
+    this.resetZoomPan();
+
     // construct the simulation
-    this.simulation = d3
-      .forceSimulation()
-      .force('link', d3.forceLink().id(d => d.pub_key))
-      .force(
-        'charge',
-        d3
-          .forceManyBody()
-          .strength(-100)
-          .distanceMax(1000)
-      )
-      .force('center', d3.forceCenter(width / 2, height / 2))
-      .force('x', d3.forceX(width / 2).strength(0.01))
-      .force('y', d3.forceY(height / 2).strength(0.01))
-      .on('tick', this._simulationTick)
-      .on('end', () => {
-        console.log('render complete');
-      });
+    this.simulation = d3Sim.createSimulation({ width, height });
+    this.simulation.on('tick', this._simulationTick);
+    this.simulation.on('end', () => console.log('render complete'));
 
     // construct link selection method
     this.links = zoomGroup
