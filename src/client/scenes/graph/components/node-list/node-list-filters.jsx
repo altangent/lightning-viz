@@ -9,9 +9,9 @@ export class NodeListFilters extends React.Component {
   };
 
   state = {
-    query: "country in ('US','CA')",
+    query: '',
     invalid: false,
-    queryMode: true,
+    queryMode: false,
   };
 
   queryChanged = e => {
@@ -38,20 +38,43 @@ export class NodeListFilters extends React.Component {
     return (
       <div className="node-list-filter">
         <form className="form" onSubmit={this.search}>
+          <div className="custom-control custom-radio custom-control-inline">
+            <label className="">
+              <input
+                name="mode"
+                type="radio"
+                className="form-check-input form-check-input-sm"
+                value="alias"
+                onChange={this.modeChange}
+                checked={!queryMode}
+              />
+              Alias
+            </label>
+          </div>
+          <div className="custom-control custom-radio custom-control-inline">
+            <label className="form-check-label form-check-label-sm">
+              <input
+                id="queryModeRadio"
+                name="mode"
+                type="radio"
+                className="form-check-input form-check-input-sm"
+                value="query"
+                onChange={this.modeChange}
+                checked={queryMode}
+              />
+              Advanced querying
+            </label>
+          </div>
+          <div className="query-info-container">
+            <QueryInfo />
+          </div>
           <div className="form-group">
             <div className="input-group input-group-sm">
-              <div className="input-group-prepend">
-                <div className="input-group-text">
-                  <select className="form-control form-control-sm" onChange={this.modeChange}>
-                    <option value="query">Query:</option>
-                    <option value="">Alias:</option>
-                  </select>
-                </div>
-              </div>
               <input
                 type="text"
                 className={'form-control form-control-sm' + (invalid ? ' is-invalid' : '')}
                 value={query}
+                placeholder={queryMode ? "country in ('US', 'CA')" : 'graph.lndexplorer.com'}
                 onChange={this.queryChanged}
                 onKeyDown={this.queryKeyDown}
               />
@@ -65,7 +88,6 @@ export class NodeListFilters extends React.Component {
                 </button>
               </div>
             </div>
-            {queryMode && <QueryInfo />}
           </div>
         </form>
       </div>

@@ -174,7 +174,7 @@ export class Graph extends React.Component {
     // update the simulation
     this.simulation.nodes(nodes);
     this.simulation.force('link').links(links);
-    this.simulation.restart(); // adjust to allow first run to finish
+    //this.simulation.restart(); // adjust to allow first run to finish
   };
 
   _nodeClicked = d => {
