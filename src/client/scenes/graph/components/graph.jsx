@@ -174,6 +174,7 @@ export class Graph extends React.Component {
     // update the simulation
     this.simulation.nodes(nodes);
     this.simulation.force('link').links(links);
+    this.simulation.alpha(0); // force single render from server values
     //this.simulation.restart(); // adjust to allow first run to finish
   };
 
