@@ -121,16 +121,11 @@ export class Graph extends React.Component {
     this.simulation = d3
       .forceSimulation()
       .force('link', d3.forceLink().id(d => d.pub_key))
-      .force(
-        'charge',
-        d3
-          .forceManyBody()
-          .strength(-100)
-          .distanceMax(1000)
-      )
-      .force('center', d3.forceCenter(width / 2, height / 2))
-      .force('x', d3.forceX(width / 2).strength(0.01))
-      .force('y', d3.forceY(height / 2).strength(0.01))
+      .force('charge', d3.forceManyBody().strength(-500))
+      // //.force('center', d3.forceCenter(width / 2, height / 2))
+      // .force('center', d3.forceCollide(200))
+      // .force('x', d3.forceX(width / 2).strength(0.01))
+      // .force('y', d3.forceY(height / 2).strength(0.01))
       .on('tick', this._simulationTick)
       .on('end', () => {
         console.log('render complete');
@@ -155,7 +150,18 @@ export class Graph extends React.Component {
       .attr('y1', d => d.source.y)
       .attr('x2', d => d.target.x)
       .attr('y2', d => d.target.y);
-    this.nodes.attr('cx', d => d.x).attr('cy', d => d.y);
+    this.nodes
+      .selectAll('circle')
+      .attr('cx', d => d.x)
+      .attr('cy', d => d.y);
+    this.nodes
+      .selectAll('rect')
+      .attr('x', d => d.x - 60 * (d.alias.length / 20))
+      .attr('y', d => d.y + 5);
+    this.nodes
+      .selectAll('text')
+      .attr('x', d => d.x)
+      .attr('y', d => d.y);
   };
 
   _renderUpdates = () => {
@@ -166,12 +172,31 @@ export class Graph extends React.Component {
     this.nodes = this.nodes
       .data(nodes)
       .enter()
-      .append('circle')
+      .append('g')
       .attr('id', d => 'pk_' + d.pub_key)
+      .merge(this.nodes);
+
+    // append circle to node
+    this.nodes
+      .append('circle')
       .attr('style', d => 'fill: ' + d.color)
       .attr('r', 2)
-      .on('click', this._nodeClicked)
-      .merge(this.nodes);
+      .on('click', this._nodeClicked);
+
+    // append text to node
+    this.nodes
+      .append('rect')
+      .attr('style', d => 'fill: ' + d.color)
+      .attr('width', d => d.alias.length * 5)
+      .attr('height', 16)
+      .attr('rx', 2)
+      .attr('ry', 2);
+
+    this.nodes
+      .append('text')
+      .attr('dy', 20)
+      .attr('dx', d => -55 * (d.alias.length / 20))
+      .text(d => d.alias);
 
     // merge the new links
     this.links.exit().remove();
