@@ -64,7 +64,7 @@ export class Graph extends React.Component {
     let d3svg = d3.select(this.svgRef);
     let width = d3svg.attr('width');
     let height = d3svg.attr('height');
-    let transform = d3.zoomTransform(d3svg).translate(width / 2 - 800, height / 2 - 400);
+    let transform = d3.zoomTransform(d3svg).translate(width / 2 - 400, height / 2 - 300);
     this.zoom.translateTo(d3svg, transform.x, transform.y);
     this.zoom.scaleTo(d3svg, 0.5);
   };
