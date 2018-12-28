@@ -10,18 +10,18 @@ module.exports = {
 };
 
 async function collectPeerInfo(skipProcessed = false) {
-  try {
-    let graph = await lnd.client.describeGraph({});
-    winston.info(`found ${graph.nodes.length} peers to process`);
+  let graph = await lnd.client.describeGraph({});
+  winston.info(`found ${graph.nodes.length} peers to process`);
 
-    winston.profile('peer processing');
-    for (let node of graph.nodes) {
+  winston.profile('peer processing');
+  for (let node of graph.nodes) {
+    try {
       await processNode(node, skipProcessed);
+    } catch (ex) {
+      winston.error('failed to process peer', node.pub_key);
     }
-    winston.profile('peer processing');
-  } catch (ex) {
-    winston.error(ex);
   }
+  winston.profile('peer processing');
 }
 
 async function processNode({ pub_key, addresses }, skipProcessed) {
@@ -47,6 +47,8 @@ async function processNode({ pub_key, addresses }, skipProcessed) {
 
   let addr = addresses[0].addr;
   let [host] = splitAddr(addr);
+
+  if (host.endsWith('.onion')) return;
 
   if (!peer.geoInfo) {
     let geoInfo = await geoService.getHostGeoInfo(host);
