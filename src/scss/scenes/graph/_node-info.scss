@@ -17,45 +17,57 @@
     overflow: hidden;
     margin-right: 2rem;
   }
+
+  .node-info-body {
+    display: flex;
+    overflow: hidden;
+    flex-direction: column;
+  }
 }
+
+// .node-details {
+// }
 
 .node-channel-list {
   height: 100%;
   overflow-y: scroll;
   list-style-type: none;
   padding-left: 0;
-}
+  margin-bottom: 0;
+  border-top: 1px solid $card-border-color;
+  border-bottom: 1px solid $card-border-color;
 
-.node-channel {
-  margin-bottom: 0.75rem;
+  .node-channel {
+    margin-bottom: 0.75rem;
 
-  .channel-source-label,
-  .channel-target-label {
-    font-size: 0.8em;
-    width: 50%;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-  .channel-source-label {
-    float: left;
-    text-align: left;
-  }
-  .channel-target-label {
-    float: right;
-    text-align: right;
-  }
-  .channel-capacity {
-    margin-top: -0.4rem;
-    text-align: center;
-    font-size: 0.8em;
-  }
-  .channel-viz {
-    line {
-      stroke: #338dc9;
-      stroke-width: 1px;
-      stroke-opacity: 0.5;
-      stroke-dasharray: 9, 3;
+    .channel-source-label,
+    .channel-target-label {
+      font-size: 0.8em;
+      width: 50%;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .channel-source-label {
+      float: left;
+      text-align: left;
+    }
+    .channel-target-label {
+      float: right;
+      text-align: right;
+    }
+    .channel-capacity {
+      margin-top: -0.4rem;
+      text-align: center;
+      font-size: 0.8em;
+    }
+    .channel-viz {
+      line {
+        stroke: #338dc9;
+        stroke-width: 1px;
+        stroke-opacity: 0.5;
+        stroke-dasharray: 9, 3;
+      }
     }
   }
 }

@@ -19,7 +19,7 @@ export const NodeInfoCard = ({ selectedNode, deselectNode, ...props }) => {
           {selectedNode.alias || selectedNode.pub_key}
         </h3>
       </div>
-      <div className="card-body ">
+      <div className="card-body node-info-body">
         <NodeDetails selectedNode={selectedNode} {...props} />
         <hr className="my-3" />
         <NodeChannelList selectedNode={selectedNode} {...props} />

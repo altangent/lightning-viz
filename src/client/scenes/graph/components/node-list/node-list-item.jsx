@@ -10,8 +10,10 @@ export const NodeListItem = ({ node, selectNode }) => (
     </div>
     <div className="node-alias">{node.alias || node.pub_key}</div>
     <div className="node-country">
-      {node.geo_info && (
+      {node.geo_info && node.geo_info.country_code ? (
         <span className={'flag-icon flag-icon-' + node.geo_info.country_code.toLowerCase()} />
+      ) : (
+        <span className={'flag-icon'} />
       )}
     </div>
     <div className="node-reachable">
