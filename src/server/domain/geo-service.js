@@ -1,4 +1,5 @@
-const http = require('http');
+const winston = require('winston');
+const https = require('https');
 
 module.exports = {
   getHostGeoInfo,
@@ -10,9 +11,9 @@ async function getHostGeoInfo(ip) {
 
 function getRemoteInfo(ip) {
   return new Promise((resolve, reject) => {
-    let req = http.request(
+    let req = https.request(
       {
-        host: 'freegeoip.net',
+        host: 'freegeoip.app',
         path: '/json/' + ip,
         method: 'get',
       },
@@ -21,7 +22,12 @@ function getRemoteInfo(ip) {
         res.on('data', data => buffers.push(data));
         res.on('end', () => {
           let raw = Buffer.concat(buffers).toString();
-          res.statusCode === 200 ? resolve(JSON.parse(raw)) : reject(raw);
+          if (res.statusCode === 200) {
+            return resolve(JSON.parse(raw));
+          } else {
+            winston.warn('geoip failed for ' + ip);
+            return reject(raw);
+          }
         });
       }
     );
