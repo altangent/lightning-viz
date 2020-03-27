@@ -1,16 +1,16 @@
 const winston = require('winston');
-const lnd = require('../lnd');
 const peerMapper = require('../data/peer-mapper');
 const { splitAddr } = require('../utils/addr-utils');
 const geoService = require('./geo-service');
 const peerService = require('./peer-service');
+const lightning = require('../lightning/lightning-service');
 
 module.exports = {
   collectPeerInfo,
 };
 
 async function collectPeerInfo(skipProcessed = false) {
-  let graph = await lnd.client.describeGraph({});
+  let graph = await lightning.describeGraph();
   winston.info(`found ${graph.nodes.length} peers to process`);
 
   winston.profile('peer processing');
