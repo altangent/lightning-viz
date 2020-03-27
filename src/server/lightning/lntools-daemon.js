@@ -13,15 +13,17 @@ class LntoolsDaemon extends EventEmitter {
     switch (opts.network) {
       case 'BitcoinTestnet':
         this.chainHash = Buffer.from("43497fd7f826957108f4a30fd9cec3aeba79972084e90ead01ea330900000000", "hex"); // prettier-ignore
-        this.dbpath = '.dbtestnet';
+        this.dbpath = 'data/gossip';
+        this.testnet = true;
         break;
       case 'BitcoinMainnet':
         this.chainHash = Buffer.from("6fe28c0ab6f1b372c1a6a246ae63f74f931e8365e15a089c68d6190000000000", "hex"); // prettier-ignore
-        this.dbpath = '.dbmainnet';
+        this.dbpath = 'data/gossip';
+        this.testnet = false;
         break;
     }
 
-    const logger = new Logger('lntg');
+    const logger = new Logger('lntools');
     logger.transports.push(new ConsoleTransport(console));
     logger.level = LogLevel.Debug;
     this.logger = logger;
@@ -122,7 +124,10 @@ class LntoolsDaemon extends EventEmitter {
 
   describeGraph() {
     const serializer = new LndSerializer();
-    return serializer.toObject(this.graphManager.graph);
+    const graph = serializer.toObject(this.graphManager.graph);
+    graph.chains = ['Bitcoin'];
+    graph.testnet = this.testnet;
+    return graph;
   }
 }
 

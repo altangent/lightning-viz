@@ -11,8 +11,6 @@ async function loadGraph() {
   winston.profile('load graph');
 
   let graph = await lightning.describeGraph();
-  graph.chains = ['Bitcoin'];
-  graph.testnet = true;
 
   for (let i = 0; i < graph.nodes.length; i++) {
     let node = graph.nodes[i];
