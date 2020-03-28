@@ -5,10 +5,10 @@ const compression = require('compression');
 const serveStatic = require('serve-static');
 const scheduler = require('node-schedule');
 const app = express();
-const lnd = require('./lnd');
+const lightning = require('./lightning/lightning-service');
 const peerProcessor = require('./domain/peer-processor');
 
-lnd
+lightning
   .connect()
   .then(() => peerProcessor.collectPeerInfo(true))
   .catch(err => {

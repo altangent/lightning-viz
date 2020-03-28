@@ -1,7 +1,7 @@
 const winston = require('winston');
 const peerMapper = require('../data/peer-mapper');
 const d3Sim = require('../../shared/d3-simulation');
-const lnd = require('../lnd');
+const lightning = require('../lightning/lightning-service');
 
 module.exports = {
   loadGraph,
@@ -9,17 +9,14 @@ module.exports = {
 
 async function loadGraph() {
   winston.profile('load graph');
-  let info = await lnd.client.getInfo({});
-  let graph = await lnd.client.describeGraph({});
+
+  let graph = await lightning.describeGraph();
 
   for (let i = 0; i < graph.nodes.length; i++) {
     let node = graph.nodes[i];
     let peerInfo = await peerMapper.getPeer(node.pub_key);
     graph.nodes[i] = Object.assign(node, peerInfo);
   }
-
-  graph.chains = info.chains;
-  graph.testnet = info.testnet;
 
   await runSimulation(graph);
   winston.profile('load graph');

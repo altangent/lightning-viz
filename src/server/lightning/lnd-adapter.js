@@ -4,8 +4,17 @@ let _instance;
 
 module.exports = {
   connect,
+
   get client() {
     return _instance;
+  },
+
+  async describeGraph() {
+    let info = await _instance.client.getInfo({});
+    let graph = await _instance.client.describeGraph({});
+    graph.chains = info.chains;
+    graph.testnet = info.testnet;
+    return graph;
   },
 };
 
