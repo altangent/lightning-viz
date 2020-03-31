@@ -4,6 +4,7 @@ import { NodeListCard } from './components/node-list/node-list-card';
 import { NodeInfoCard } from './components/node-info/node-info-card';
 import { GraphControls } from './components/graph-controls';
 import { GraphSummary } from './components/graph-summary';
+import { Loading } from '../components/loading';
 import nodeSearch from '../../utils/node-search';
 
 export class GraphScene extends React.Component {
@@ -15,6 +16,7 @@ export class GraphScene extends React.Component {
     selectedNode: undefined,
     selectedNodeChannels: undefined,
     filteredNodes: undefined,
+    processingStage: 'rendering',
   };
 
   componentWillMount() {
@@ -22,6 +24,7 @@ export class GraphScene extends React.Component {
   }
 
   loadGraph() {
+    this.setState({ processingState: 'rendering' });
     fetch('/api/graph')
       .then(res => res.json())
       .then(graph => {
@@ -44,6 +47,7 @@ export class GraphScene extends React.Component {
           filteredNodes,
           nodeLookup,
           edgeLookup,
+          processingStage: 'ready',
         });
         this.graphRef.redrawGraph(graph);
       });
@@ -87,6 +91,7 @@ export class GraphScene extends React.Component {
   render() {
     return (
       <div className="graph-container">
+        {this.state.processingStage === 'ready' ? '' : <Loading />}
         <Graph ref={el => (this.graphRef = el)} onNodeSelected={this.onNodeSelected} />
         <GraphSummary graph={this.state.renderedGraph} />
         <GraphControls
