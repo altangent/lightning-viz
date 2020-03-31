@@ -30,7 +30,7 @@ export class NodeListFilters extends React.Component {
       let valid = nodeSearch.validate(query);
       if (valid) this.props.filterNodes(query);
       else this.setState({ invalid: true });
-    } else this.props.filterNodes(`alias like '*${query}*'`);
+    } else this.props.filterNodes(`alias like '*${query}*' or pub_key = '${query}'`);
   };
 
   render() {

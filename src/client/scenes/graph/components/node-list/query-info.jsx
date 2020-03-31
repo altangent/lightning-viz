@@ -43,6 +43,10 @@ export const QueryInfoContent = () => (
     <div className="ops">
       <div className="title">Properties:</div>
       <div className="op">
+        <div className="op-name">pub_key</div>
+        <div className="op-desc">The public key for the node</div>
+      </div>
+      <div className="op">
         <div className="op-name">alias</div>
         <div className="op-desc">The configured alias for the node</div>
       </div>
