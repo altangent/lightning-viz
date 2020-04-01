@@ -5,6 +5,7 @@ const { RocksdbGossipStore } = require('@lntools/gossip-rocksdb');
 const { GraphManager, LndSerializer } = require('@lntools/graph');
 const { ConsoleTransport, Logger, LogLevel } = require('@lntools/logger');
 const { Peer, InitMessage, GossipManager, GossipMemoryStore } = require('@lntools/wire');
+const { MessageType } = require('@lntools/wire');
 
 class LntoolsDaemon extends EventEmitter {
   constructor(opts) {
@@ -28,6 +29,7 @@ class LntoolsDaemon extends EventEmitter {
     logger.level = LogLevel.Debug;
     this.logger = logger;
 
+    // constructs a new client to connect to bitcoind
     const chainClient = new BitcoindClient({
       host: opts.bitcoindHost,
       port: opts.bitcoindPort,
@@ -38,8 +40,13 @@ class LntoolsDaemon extends EventEmitter {
     });
     this.chainClient = chainClient;
 
+    // construct data storage for gossip messages
     const gossipStore = new RocksdbGossipStore(this.dbpath);
     const pendingStore = new GossipMemoryStore();
+    this.gossipStore = gossipStore;
+
+    // constructs the gossip manager that handles orchestration of
+    // gossip messsages from all peers
     const gossipManager = new GossipManager({
       chainHash: this.chainHash,
       logger,
@@ -47,12 +54,15 @@ class LntoolsDaemon extends EventEmitter {
       pendingStore,
       chainClient: this.chainClient,
     });
-    this.gossipStore = gossipStore;
     this.gossipManager = gossipManager;
 
+    // creates the transaction watcher that uses the zeromq bitcoind
+    // client to watch for the spending of specific outpoints (txid:vout tuple)
     const txWatcher = new TxWatcher(chainClient);
     this.txWatcher = txWatcher;
 
+    // creates a graph manager that receives gossip messages and construucts
+    // a graph representation of the routing messages
     const graphManager = new GraphManager(gossipManager);
     this.graphManager = graphManager;
   }
@@ -63,30 +73,39 @@ class LntoolsDaemon extends EventEmitter {
     const gossipStore = this.gossipStore;
     const graphManager = this.graphManager;
 
-    // start the tx watcher looking for transactions
+    // start the tx watcher, which will connect to bitcoind and
+    // listen for received transactions
     txWatcher.start();
 
-    gossipManager.on('error', err => this.emit('error', err));
-    gossipManager.on('flushed', () => this.emit('flushed'));
-
-    // watch for chan_ann message and have the tx watcher monitor for them
-    gossipManager.on('message', async msg => {
-      if (msg.outpoint) {
-        txWatcher.watchOutpoint(msg.outpoint);
-      }
-    });
-
+    // when an outpoint is spent (we'll listen for them below), remove
+    // the channel from the gossip database and the current graph view
     txWatcher.on('outpointspent', async (tx, outpoint) => {
       const msg = await gossipStore.findChannelAnnouncementByOutpoint(outpoint);
       await gossipManager.removeChannel(msg.shortChannelId);
+      await graphManager.removeChannel(outpoint);
       this.emit('channel_removed', msg.shortChannelId);
     });
 
+    // propagate messages recieved when the graph has added nodes or channels
     graphManager.on('node', node => this.emit('node', node.nodeId));
     graphManager.on('channel', channel => this.emit('channel_created', channel.shortChannelId));
     graphManager.on('error', err => this.emit('error', err));
 
-    // starts the gossip manager
+    // when the gossip manager emits a new gossip message, we check to see if it
+    // is a chan_ann message that has an outpoint. If it is, we add the outpoint to
+    // the transaction watcher to check if it is trying to be spent.
+    // The outpoint is attached during message validation when information is
+    // retrieved from bitcoind.
+    gossipManager.on('message', async msg => {
+      if (msg.type === MessageType.ChannelAnnouncement && msg.outpoint) {
+        txWatcher.watchOutpoint(msg.outpoint);
+      }
+    });
+    gossipManager.on('error', err => this.emit('error', err));
+
+    // starts the gossip manager which will restore all messages
+    // from the gossip database, validate that they are still valid channels
+    // and emit them so that the graph can be reconstructed
     await gossipManager.start();
   }
 
@@ -102,7 +121,7 @@ class LntoolsDaemon extends EventEmitter {
       return initMessage;
     };
 
-    // constructs the peer and attaches a logger for tthe peer.
+    // constructs a new peer
     const peer = new Peer({
       ls: this.localSecret,
       rpk: Buffer.from(pubkey, 'hex'),
@@ -112,13 +131,14 @@ class LntoolsDaemon extends EventEmitter {
       initMessageFactory,
     });
     peer.on('open', () => logger.info('connecting'));
-    peer.on('error', err => logger.error('%s', err.stack));
+    peer.on('error', err => this.emit('error', err));
     peer.on('ready', () => logger.info('peer is ready'));
 
-    // add peer to gossip manager
+    // add peer to gossip manager. This will initialize gossip
+    // synchronization once that pear has connected and is ready.
     gossipManager.addPeer(peer);
 
-    // connect to the peer
+    // connect to the peer!
     peer.connect();
   }
 
