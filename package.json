@@ -28,10 +28,10 @@
   "license": "MIT",
   "dependencies": {
     "@lntools/chainmon": "^0.1.1",
-    "@lntools/gossip-rocksdb": "^0.2.1",
-    "@lntools/graph": "^0.3.1",
+    "@lntools/gossip-rocksdb": "^0.2.3",
+    "@lntools/graph": "^0.3.3",
     "@lntools/logger": "^0.6.1",
-    "@lntools/wire": "^0.13.1",
+    "@lntools/wire": "^0.13.3",
     "body-parser": "^1.18.3",
     "bootstrap": "^4.3.1",
     "browserify": "^16.2.3",
