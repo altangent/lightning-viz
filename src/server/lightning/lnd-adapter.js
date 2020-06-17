@@ -10,8 +10,8 @@ module.exports = {
   },
 
   async describeGraph() {
-    let info = await _instance.client.getInfo({});
-    let graph = await _instance.client.describeGraph({});
+    let info = await _instance.getInfo({});
+    let graph = await _instance.describeGraph({});
     graph.chains = info.chains;
     graph.testnet = info.testnet;
     return graph;
