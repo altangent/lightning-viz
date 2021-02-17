@@ -1,11 +1,11 @@
 const { EventEmitter } = require('events');
-const { BitcoindClient } = require('@lntools/bitcoind');
-const { TxWatcher } = require('@lntools/chainmon');
-const { RocksdbGossipStore } = require('@lntools/gossip-rocksdb');
-const { GraphManager, LndSerializer } = require('@lntools/graph');
-const { ConsoleTransport, Logger, LogLevel } = require('@lntools/logger');
-const { Peer, InitMessage, GossipManager, GossipMemoryStore } = require('@lntools/wire');
-const { MessageType } = require('@lntools/wire');
+const { BitcoindClient } = require('@node-lightning/bitcoind');
+const { TxWatcher } = require('@node-lightning/chainmon');
+const { RocksdbGossipStore } = require('@node-lightning/gossip-rocksdb');
+const { GraphManager, LndSerializer } = require('@node-lightning/graph');
+const { ConsoleTransport, Logger, LogLevel } = require('@node-lightning/logger');
+const { Peer, InitMessage, GossipManager, GossipMemoryStore } = require('@node-lightning/wire');
+const { MessageType } = require('@node-lightning/wire');
 
 class LntoolsDaemon extends EventEmitter {
   constructor(opts) {
