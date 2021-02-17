@@ -1,4 +1,5 @@
-FROM node:10
+FROM node:lts-alpine3.13
+RUN apk add --no-cache python3 make g++ musl-dev linux-headers
 WORKDIR /usr/src/app
 COPY package.json .
 RUN npm install --no-save --production
