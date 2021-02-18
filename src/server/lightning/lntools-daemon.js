@@ -4,8 +4,10 @@ const { TxWatcher } = require('@node-lightning/chainmon');
 const { RocksdbGossipStore } = require('@node-lightning/gossip-rocksdb');
 const { GraphManager, LndSerializer } = require('@node-lightning/graph');
 const { ConsoleTransport, Logger, LogLevel } = require('@node-lightning/logger');
-const { Peer, InitMessage, GossipManager, GossipMemoryStore } = require('@node-lightning/wire');
+const { Peer, InitFeatureFlags } = require('@node-lightning/wire');
+const { GossipManager, GossipMemoryStore } = require('@node-lightning/wire');
 const { MessageType } = require('@node-lightning/wire');
+const { BitField } = require('@node-lightning/core');
 
 class LntoolsDaemon extends EventEmitter {
   constructor(opts) {
@@ -47,13 +49,7 @@ class LntoolsDaemon extends EventEmitter {
 
     // constructs the gossip manager that handles orchestration of
     // gossip messsages from all peers
-    const gossipManager = new GossipManager({
-      chainHash: this.chainHash,
-      logger,
-      gossipStore,
-      pendingStore,
-      chainClient: this.chainClient,
-    });
+    const gossipManager = new GossipManager(logger, gossipStore, pendingStore, this.chainClient);
     this.gossipManager = gossipManager;
 
     // creates the transaction watcher that uses the zeromq bitcoind
@@ -112,24 +108,13 @@ class LntoolsDaemon extends EventEmitter {
   connectToPeer(pubkey, host, port) {
     const logger = this.logger;
     const gossipManager = this.gossipManager;
-    const initMessageFactory = () => {
-      const initMessage = new InitMessage();
-      initMessage.localInitialRoutingSync = false;
-      initMessage.localDataLossProtect = true;
-      initMessage.localGossipQueries = true;
-      initMessage.localGossipQueriesEx = false;
-      return initMessage;
-    };
+
+    const localFeatures = new BitField();
+    localFeatures.set(InitFeatureFlags.optionDataLossProtectRequired);
+    localFeatures.set(InitFeatureFlags.gossipQueriesRequired);
 
     // constructs a new peer
-    const peer = new Peer({
-      ls: this.localSecret,
-      rpk: Buffer.from(pubkey, 'hex'),
-      host,
-      port,
-      logger,
-      initMessageFactory,
-    });
+    const peer = new Peer(this.localSecret, localFeatures, [this.chainHash], logger);
     peer.on('open', () => logger.info('connecting'));
     peer.on('error', err => this.emit('error', err));
     peer.on('ready', () => logger.info('peer is ready'));
@@ -139,12 +124,13 @@ class LntoolsDaemon extends EventEmitter {
     gossipManager.addPeer(peer);
 
     // connect to the peer!
-    peer.connect();
+    peer.connect(Buffer.from(pubkey, 'hex'), host, port);
   }
 
   describeGraph() {
     const serializer = new LndSerializer();
     const graph = serializer.toObject(this.graphManager.graph);
+
     graph.chains = ['Bitcoin'];
     graph.testnet = this.testnet;
     return graph;
