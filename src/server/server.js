@@ -8,6 +8,8 @@ const app = express();
 const lightning = require('./lightning/lightning-service');
 const peerProcessor = require('./domain/peer-processor');
 
+const listenPort = process.env.HTTP_PORT || 8000;
+
 lightning
   .connect()
   .then(() => peerProcessor.collectPeerInfo(true))
@@ -33,4 +35,4 @@ app.get('/', (req, res) => {
 
 app.use(require('./apis/api-network'));
 
-app.listen(8000, () => winston.info('server listening on 8000'));
+app.listen(listenPort, () => winston.info('server listening on ' + listenPort.toString(10)));

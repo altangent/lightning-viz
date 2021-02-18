@@ -36,6 +36,7 @@ LNTOOLS_BITCOIND_ZMQRAWTX=tcp://host.docker.internal:38332 \
 LNTOOLS_PEER_PUBKEY=036b96e4713c5f84dcb8030592e1bd42a2d9a43d91fa2e535b9bfd05f2c5def9b9 \
 LNTOOLS_PEER_HOST=38.87.54.163 \
 LNTOOLS_PEER_PORT=9745 \
+HTTP_PORT=8000 \
 npm start
 ```
 
@@ -53,6 +54,7 @@ docker run \
     -e LNTOOLS_PEER_PUBKEY=036b96e4713c5f84dcb8030592e1bd42a2d9a43d91fa2e535b9bfd05f2c5def9b9 \
     -e LNTOOLS_PEER_HOST=38.87.54.163 \
     -e LNTOOLS_PEER_PORT=9745 \
+    -e HTTP_PORT=8000 \
     -v /somepath/lightning-viz/data:/usr/src/app/data \
     -p 8000:8000 \
     --name lnviz \
