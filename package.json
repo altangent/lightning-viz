@@ -63,13 +63,13 @@
     "babelify": "^8.0.0",
     "chai": "^4.2.0",
     "eslint": "^4.19.1",
-    "eslint-plugin-react": "^7.12.4",
+    "eslint-plugin-react": "^7.25.1",
     "mocha": "^8.3.0",
-    "node-sass": "^4.14.1",
+    "node-sass": "^6.0.1",
     "nodemon": "^2.0.7",
     "npm-run-all": "^4.1.5",
     "prettier": "^1.16.4",
-    "uglify-js": "^3.4.9",
+    "uglify-js": "^3.14.2",
     "watchify": "^4.0.0"
   },
   "browserify": {
