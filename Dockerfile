@@ -1,4 +1,4 @@
-FROM node:lts-alpine3.13
+FROM node:14-alpine
 RUN apk add --no-cache python3 make g++ musl-dev linux-headers
 WORKDIR /usr/src/app
 COPY package.json .
