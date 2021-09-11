@@ -6,7 +6,7 @@
   "scripts": {
     "test": "mocha \"src/**/*.spec.js\"",
     "test:file": "mocha",
-    "start": "NODE_ENV=production node src/server/server",
+    "start": "NODE_ENV=production node --max-old-space-size=8192 src/server/server",
     "build": "npm-run-all build:*",
     "build:app": "NODE_ENV=production browserify src/client/app.jsx --extension=.jsx -o ./dist/app/bundle.js",
     "build:app-compress": "uglifyjs -c -o ./dist/app/bundle.js ./dist/app/bundle.js",

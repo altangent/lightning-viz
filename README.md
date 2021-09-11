@@ -9,7 +9,7 @@ The server also periodically pings peers to determine their connectivity. The se
 
 ## Installation
 
-Requires Node 10+.
+Requires Node 16+.
 
 ```
 git clone https://github.com/altangent/lightning-viz
