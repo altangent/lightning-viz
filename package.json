@@ -1,6 +1,6 @@
 {
   "name": "lightning-viz",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -14,7 +14,9 @@
     "watch": "npm-run-all --parallel watch:*",
     "watch:app": "browserify src/client/app.jsx --extension=.jsx -o ./dist/app/bundle.js && watchify src/client/app.jsx --debug -v --extension=.jsx -o ./dist/app/bundle.js",
     "watch:scss": "node-sass -o dist/css src/scss/app.scss && node-sass -w -o dist/css src/scss/app.scss",
-    "watch:server": "nodemon --ignore dist --ignore src/client src/server/server"
+    "watch:server": "nodemon --ignore dist --ignore src/client src/server/server",
+    "docker:build": "docker build -t ghcr.io/altangent/lightning-viz:$npm_package_version .",
+    "docker:push": "docker push ghcr.io/altangent/lightning-viz:$npm_package_version"
   },
   "keywords": [
     "bitcoin",
