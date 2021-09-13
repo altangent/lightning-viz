@@ -1,23 +1,26 @@
 const winston = require('winston');
 const express = require('express');
-const scheduler = require('node-schedule');
 const graphService = require('../domain/graph-service');
 const app = express();
 let _graph;
 
 app.get('/api/graph', (req, res, next) => getGraph(req, res).catch(next));
+app.loadGraph = loadGraph;
 
 module.exports = app;
 
-// schedule graph loading
-scheduler.scheduleJob('0 * * * * *', loadGraph);
 function loadGraph() {
   graphService
     .loadGraph()
     .then(graph => (_graph = graph))
-    .catch(winston.error);
+    .catch(winston.error)
+    .finally(scheduleLoadGraph);
 }
-setTimeout(loadGraph, 1000);
+
+function scheduleLoadGraph() {
+  const timeout = 600 * 1000; // 10 minutes
+  setTimeout(loadGraph, timeout);
+}
 
 async function getGraph(req, res) {
   res.send(_graph);

@@ -8,10 +8,13 @@ const app = express();
 const lightning = require('./lightning/lightning-service');
 const peerProcessor = require('./domain/peer-processor');
 
+const networkApi = require('./apis/api-network');
+
 const listenPort = process.env.HTTP_PORT || 8000;
 
 lightning
   .connect()
+  .then(() => networkApi.loadGraph())
   .then(() => peerProcessor.collectPeerInfo(true))
   .catch(err => {
     winston.error(err);
@@ -33,6 +36,6 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
-app.use(require('./apis/api-network'));
+app.use(networkApi);
 
 app.listen(listenPort, () => winston.info('server listening on ' + listenPort.toString(10)));
