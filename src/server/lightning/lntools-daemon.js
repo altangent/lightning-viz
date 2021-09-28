@@ -82,6 +82,14 @@ class LntoolsDaemon extends EventEmitter {
       this.emit('channel_removed', msg.shortChannelId);
     });
 
+    // attach an error handler for catching tx parse failures
+    txWatcher.on('error', (err, buf) => {
+      this.logger.error(err);
+      if (buf) {
+        this.logger.error('tx failed', buf.toString('hex'));
+      }
+    });
+
     // propagate messages recieved when the graph has added nodes or channels
     graphManager.on('node', node => this.emit('node', node.nodeId));
     graphManager.on('channel', channel => this.emit('channel_created', channel.shortChannelId));
