@@ -39,7 +39,7 @@
     "bootstrap": "^4.3.1",
     "browserify": "^16.2.3",
     "compression": "^1.7.3",
-    "d3": "^4.13.0",
+    "d3": "^7.6.1",
     "express": "^4.16.4",
     "flag-icon-css": "^3.3.0",
     "level": "^6.0.1",
